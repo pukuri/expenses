@@ -8,10 +8,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/pukuri/expenses/config"
+	"github.com/pukuri/expenses/internal/store"
 )
 
 type application struct {
 	config *config.Config
+	store  store.Storage
 }
 
 func (app *application) mount() http.Handler {
@@ -24,7 +26,7 @@ func (app *application) mount() http.Handler {
 
 	r.Use(middleware.Timeout(10 * time.Second))
 
-	r.Route("/v1", func(r chi.Router) {
+	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 	})
 

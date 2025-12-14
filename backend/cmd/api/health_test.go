@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/pukuri/expenses/config"
+	"github.com/pukuri/expenses/internal/store"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,7 +20,7 @@ func (suite *HealthCheckTestSuite) SetupTest() {
 	cfg := &config.Config{
 		Addr: ":8080",
 	}
-	suite.app = &application{config: cfg}
+	suite.app = &application{config: cfg, store: store.NewStorage(nil)}
 }
 
 func (suite *HealthCheckTestSuite) TestHealthCheckHandler() {
