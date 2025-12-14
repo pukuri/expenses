@@ -6,3 +6,6 @@ migrate-down:
 
 migrate-create:
 	docker compose run --rm migrate-create create -seq -ext sql -dir /migrations $(name)
+	
+seed:
+	docker compose run --rm backend go run cmd/migrate/seed/main.go
