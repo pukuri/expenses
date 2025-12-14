@@ -41,6 +41,11 @@ func (app *application) mount() http.Handler {
 				r.Patch("/", app.updateTransactionHandler)
 			})
 		})
+
+		r.Route("/categories", func(r chi.Router) {
+			r.Post("/", app.createCategoryHandler)
+			r.Get("/", app.indexCategoryHandler)
+		})
 	})
 
 	return r

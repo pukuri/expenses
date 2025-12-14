@@ -54,7 +54,7 @@ func (app *application) createTransactionHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	if err := writeJSON(w, http.StatusCreated, transaction); err != nil {
+	if err := app.jsonResponse(w, http.StatusCreated, transaction); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -63,7 +63,7 @@ func (app *application) createTransactionHandler(w http.ResponseWriter, r *http.
 func (app *application) getTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	transaction := getTransactionFromCtx(r)
 
-	if err := writeJSON(w, http.StatusOK, transaction); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, transaction); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -78,7 +78,7 @@ func (app *application) indexTransactionHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	if err := writeJSON(w, http.StatusOK, transactions); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, transactions); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -135,7 +135,7 @@ func (app *application) updateTransactionHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	if err := writeJSON(w, http.StatusOK, transaction); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, transaction); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}

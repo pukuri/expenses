@@ -26,6 +26,9 @@ func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction)
 		VALUES ($1, $2, $3, $4) RETURNING id, created_at, updated_at
 	`
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	err := s.db.QueryRowContext(
 		ctx,
 		query,
@@ -51,6 +54,9 @@ func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
 		SELECT id, category_id, amount, running_balance, description, created_at, updated_at
 		FROM transactions
 	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
 
 	rows, err := s.db.QueryContext(ctx, query)
 	if err != nil {
@@ -88,6 +94,9 @@ func (s *TransactionStore) GetById(ctx context.Context, id int64) (*Transaction,
 		WHERE id = $1
 	`
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	var transaction Transaction
 	err := s.db.QueryRowContext(
 		ctx,
@@ -118,6 +127,9 @@ func (s *TransactionStore) GetById(ctx context.Context, id int64) (*Transaction,
 func (s *TransactionStore) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM transactions WHERE id = $1`
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	res, err := s.db.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
@@ -141,6 +153,9 @@ func (s *TransactionStore) Update(ctx context.Context, transaction *Transaction)
 		SET amount = $1, running_balance = $2, description = $3, category_id = $4
 		WHERE id = $5
 	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
 
 	_, err := s.db.ExecContext(ctx, query, transaction.Amount, transaction.RunningBalance, transaction.Description, transaction.CategoryID, transaction.ID)
 	if err != nil {
