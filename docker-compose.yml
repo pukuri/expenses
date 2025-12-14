@@ -12,7 +12,9 @@ services:
       - ./backend:/app
     working_dir: /app
     command: sh -c "air"
-      
+    depends_on:
+      - db
+
   frontend:
     build: ./frontend
     ports:
@@ -35,6 +37,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/db_init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  migrate-up:
+    image: migrate/migrate
+    volumes:
+      - ./backend/cmd/migrate/migrations:/migrations
+    command: ["-path", "/migrations", "-database",  "postgres://myuser:mypassword@db:5432/expenses?sslmode=disable", "up"]
+    depends_on:
+      - db
+
+  migrate-down:
+    image: migrate/migrate
+    volumes:
+      - ./backend/cmd/migrate/migrations:/migrations
+    command: ["-path", "/migrations", "-database",  "postgres://myuser:mypassword@db:5432/expenses?sslmode=disable", "down"]
+    depends_on:
+      - db
+
+  migrate-create:
+    image: migrate/migrate
+    volumes:
+      - ./backend/cmd/migrate/migrations:/migrations
+    depends_on:
+      - db
 volumes:
   postgres_data: {}
   node_modules: {}
