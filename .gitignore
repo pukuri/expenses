@@ -1,0 +1,33 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when run with the
+# -o option
+*.out
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*~
+
+# Dependency directories
+vendor/
+
+# Environment files
+.env
+
+# Build artifacts
+/backend/bin
+/backend/tmp
+/backend/air-build.log
+
+# macOS
+.DS_Store
