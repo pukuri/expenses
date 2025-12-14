@@ -9,6 +9,8 @@ import (
 	"github.com/pukuri/expenses/internal/store"
 )
 
+const version = "0.0.1"
+
 func main() {
 	cfg, err := config.Load()
 	if err != nil {

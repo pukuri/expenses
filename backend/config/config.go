@@ -17,12 +17,12 @@ type DBConfig struct {
 type Config struct {
 	Addr string `env:"ADDR" envDefault:":8080"`
 	DB   DBConfig
+	Env  string `env:"ENV" envDefault:"development"`
 }
 
 func Load() (*Config, error) {
-	// It's a good practice to log that we are loading the .env file
 	log.Println("Loading .env file")
-	// Load .env file
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("No .env file found, using environment variables")

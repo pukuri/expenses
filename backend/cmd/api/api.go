@@ -28,6 +28,19 @@ func (app *application) mount() http.Handler {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
+
+		r.Route("/transactions", func(r chi.Router) {
+			r.Post("/", app.createTransactionHandler)
+			r.Get("/", app.indexTransactionHandler)
+
+			r.Route("/{transactionID}", func(r chi.Router) {
+				r.Use(app.transactionContextMiddleware)
+
+				r.Get("/", app.getTransactionHandler)
+				r.Delete("/", app.deleteTransactionHandler)
+				r.Patch("/", app.updateTransactionHandler)
+			})
+		})
 	})
 
 	return r
