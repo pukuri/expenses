@@ -35,7 +35,7 @@ func (app *application) createTransactionHandler(w http.ResponseWriter, r *http.
 	}
 
 	var categoryID sql.NullInt64
-	if payload.CategoryID != nil {
+	if *payload.CategoryID != 0 {
 		categoryID = sql.NullInt64{Int64: *payload.CategoryID, Valid: true}
 	} else {
 		categoryID = sql.NullInt64{Valid: false}

@@ -37,7 +37,7 @@ export default function MainTable() {
   }, []);
 
   const theadClass = "border-b p-4 pt-0 pb-3 pl-8 text-left font-medium border-gray-600 text-gray-200"
-  const tbodyClass = "border-b p-4 pl-8 border-gray-700 text-gray-200"
+  const tbodyClass = "border-b p-2 border-gray-700 text-gray-200"
 
   return (
     <div className="pt-4 bg-gray-950/50">

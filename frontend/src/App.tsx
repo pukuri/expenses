@@ -5,8 +5,8 @@ import TransactionInput from './features/TransactionIInput'
 function App() {
   return (
     <div className="flex flex-row h-screen">
-      <div className="bg-red-200 w-1/2 p-4">Div 1</div>
-      <div className="bg-blue-200 w-1/2 overflow-scroll">
+      <div className="bg-red-200 w-1/3 p-4">Div 1</div>
+      <div className="bg-blue-200 w-2/3 overflow-scroll static">
         <MainTable />
         <TransactionInput />
       </div>
