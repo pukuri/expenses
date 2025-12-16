@@ -20,8 +20,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./:/frontend:/app
-      - node_modules:/frontend/node_modules
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     stdin_open: true
@@ -63,4 +63,3 @@ services:
       - db
 volumes:
   postgres_data: {}
-  node_modules: {}

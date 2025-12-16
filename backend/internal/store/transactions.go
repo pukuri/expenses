@@ -7,13 +7,17 @@ import (
 )
 
 type Transaction struct {
-	ID             int64         `json:"id"`
-	CategoryID     sql.NullInt64 `json:"category_id"`
-	Amount         int64         `json:"amount"`
-	RunningBalance int64         `json:"running_balance"`
-	Description    string        `json:"description"`
-	CreatedAt      string        `json:"created_at"`
-	UpdatedAt      string        `json:"updated_at"`
+	ID             int64          `json:"id"`
+	Amount         int64          `json:"amount"`
+	RunningBalance int64          `json:"running_balance"`
+	Description    string         `json:"description"`
+	CategoryName   sql.NullString `json:"category_name,omitempty"`
+	CategoryColor  sql.NullString `json:"category_color,omitempty"`
+	CreatedAt      string         `json:"created_at"`
+	UpdatedAt      string         `json:"updated_at"`
+
+	// field for create/update operations
+	CategoryID sql.NullInt64 `json:"category_id,omitempty"`
 }
 
 type TransactionStore struct {
@@ -51,8 +55,11 @@ func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction)
 
 func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
 	query := `
-		SELECT id, category_id, amount, running_balance, description, created_at, updated_at
-		FROM transactions
+		SELECT t.id, c.name, c.color, t.amount, t.running_balance, t.description, t.created_at, t.updated_at
+		FROM transactions t
+		LEFT JOIN categories c
+			ON t.category_id = c.id
+		ORDER BY id DESC
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -69,7 +76,8 @@ func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
 		var transaction Transaction
 		if err := rows.Scan(
 			&transaction.ID,
-			&transaction.CategoryID,
+			&transaction.CategoryName,
+			&transaction.CategoryColor,
 			&transaction.Amount,
 			&transaction.RunningBalance,
 			&transaction.Description,
