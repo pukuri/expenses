@@ -124,6 +124,43 @@ func (s *TransactionStore) GetById(ctx context.Context, id int64) (*Transaction,
 	return &transaction, nil
 }
 
+func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
+	query := `
+		SELECT id, category_id, amount, running_balance, description, created_at, updated_at
+		FROM transactions
+		ORDER BY id DESC
+		LIMIT 1
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	var transaction Transaction
+	err := s.db.QueryRowContext(
+		ctx,
+		query,
+	).Scan(
+		&transaction.ID,
+		&transaction.CategoryID,
+		&transaction.Amount,
+		&transaction.RunningBalance,
+		&transaction.Description,
+		&transaction.CreatedAt,
+		&transaction.UpdatedAt,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &transaction, nil
+}
+
 func (s *TransactionStore) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM transactions WHERE id = $1`
 

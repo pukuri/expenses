@@ -15,6 +15,7 @@ var (
 type Storage struct {
 	Transactions interface {
 		GetById(context.Context, int64) (*Transaction, error)
+		GetLast(context.Context) (*Transaction, error)
 		Index(context.Context) ([]Transaction, error)
 		Create(context.Context, *Transaction) error
 		Delete(context.Context, int64) error

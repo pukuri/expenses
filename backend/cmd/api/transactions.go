@@ -18,7 +18,7 @@ const transactionCtx transactionKey = "transaction"
 type CreateTransactionPayload struct {
 	CategoryID     *int64 `json:"category_id"`
 	Amount         int64  `json:"amount" validate:"required"`
-	RunningBalance int64  `json:"running_balance"`
+	RunningBalance *int64 `json:"running_balance"`
 	Description    string `json:"description" validate:"required"`
 }
 
@@ -41,10 +41,27 @@ func (app *application) createTransactionHandler(w http.ResponseWriter, r *http.
 		categoryID = sql.NullInt64{Valid: false}
 	}
 
+	var runningBalance int64
+	if payload.RunningBalance != nil {
+		runningBalance = *payload.RunningBalance
+	} else {
+		lastTransaction, err := app.store.Transactions.GetLast(r.Context())
+		if err != nil {
+			if errors.Is(err, store.ErrNotFound) {
+				runningBalance = 0 - payload.Amount
+			} else {
+				app.internalServerError(w, r, err)
+				return
+			}
+		} else {
+			runningBalance = lastTransaction.RunningBalance - payload.Amount
+		}
+	}
+
 	transaction := &store.Transaction{
 		CategoryID:     categoryID,
 		Amount:         payload.Amount,
-		RunningBalance: payload.RunningBalance,
+		RunningBalance: runningBalance,
 		Description:    payload.Description,
 	}
 
