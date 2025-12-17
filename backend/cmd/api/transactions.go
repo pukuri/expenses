@@ -20,6 +20,7 @@ type CreateTransactionPayload struct {
 	Amount         int64  `json:"amount" validate:"required"`
 	RunningBalance *int64 `json:"running_balance"`
 	Description    string `json:"description" validate:"required"`
+	Date           string `json:"date" validate:"required"`
 }
 
 func (app *application) createTransactionHandler(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +64,7 @@ func (app *application) createTransactionHandler(w http.ResponseWriter, r *http.
 		Amount:         payload.Amount,
 		RunningBalance: runningBalance,
 		Description:    payload.Description,
+		Date:           payload.Date,
 	}
 
 	ctx := r.Context()

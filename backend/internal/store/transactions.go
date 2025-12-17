@@ -6,18 +6,24 @@ import (
 	"errors"
 )
 
-type Transaction struct {
+type TransactionGet struct {
 	ID             int64          `json:"id"`
 	Amount         int64          `json:"amount"`
 	RunningBalance int64          `json:"running_balance"`
 	Description    string         `json:"description"`
 	CategoryName   sql.NullString `json:"category_name,omitempty"`
 	CategoryColor  sql.NullString `json:"category_color,omitempty"`
-	CreatedAt      string         `json:"created_at"`
-	UpdatedAt      string         `json:"updated_at"`
-
-	// field for create/update operations
-	CategoryID sql.NullInt64 `json:"category_id,omitempty"`
+	Date           string         `json:"date"`
+}
+type Transaction struct {
+	ID             int64         `json:"id"`
+	Amount         int64         `json:"amount"`
+	RunningBalance int64         `json:"running_balance"`
+	Description    string        `json:"description"`
+	Date           string        `json:"date"`
+	CreatedAt      string        `json:"created_at"`
+	UpdatedAt      string        `json:"updated_at"`
+	CategoryID     sql.NullInt64 `json:"category_id,omitempty"`
 }
 
 type TransactionStore struct {
@@ -26,8 +32,8 @@ type TransactionStore struct {
 
 func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction) error {
 	query := `
-		INSERT INTO transactions (category_id, amount, running_balance, description)	
-		VALUES ($1, $2, $3, $4) RETURNING id, created_at, updated_at
+		INSERT INTO transactions (category_id, amount, running_balance, description, date)	
+		VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -40,6 +46,7 @@ func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction)
 		transaction.Amount,
 		transaction.RunningBalance,
 		transaction.Description,
+		transaction.Date,
 	).Scan(
 		&transaction.ID,
 		&transaction.CreatedAt,
@@ -53,9 +60,9 @@ func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction)
 	return nil
 }
 
-func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
+func (s *TransactionStore) Index(ctx context.Context) ([]TransactionGet, error) {
 	query := `
-		SELECT t.id, c.name, c.color, t.amount, t.running_balance, t.description, t.created_at, t.updated_at
+		SELECT t.id, c.name, c.color, t.amount, t.running_balance, t.description, t.date
 		FROM transactions t
 		LEFT JOIN categories c
 			ON t.category_id = c.id
@@ -70,10 +77,10 @@ func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
 		return nil, err
 	}
 
-	var transactions []Transaction
+	var transactions []TransactionGet
 
 	for rows.Next() {
-		var transaction Transaction
+		var transaction TransactionGet
 		if err := rows.Scan(
 			&transaction.ID,
 			&transaction.CategoryName,
@@ -81,8 +88,7 @@ func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
 			&transaction.Amount,
 			&transaction.RunningBalance,
 			&transaction.Description,
-			&transaction.CreatedAt,
-			&transaction.UpdatedAt,
+			&transaction.Date,
 		); err != nil {
 			return nil, err
 		}
@@ -97,7 +103,7 @@ func (s *TransactionStore) Index(ctx context.Context) ([]Transaction, error) {
 
 func (s *TransactionStore) GetById(ctx context.Context, id int64) (*Transaction, error) {
 	query := `
-		SELECT id, category_id, amount, running_balance, description, created_at, updated_at
+		SELECT id, category_id, amount, running_balance, description, created_at, updated_at, date
 		FROM transactions
 		WHERE id = $1
 	`
@@ -118,6 +124,7 @@ func (s *TransactionStore) GetById(ctx context.Context, id int64) (*Transaction,
 		&transaction.Description,
 		&transaction.CreatedAt,
 		&transaction.UpdatedAt,
+		&transaction.Date,
 	)
 
 	if err != nil {
@@ -134,7 +141,7 @@ func (s *TransactionStore) GetById(ctx context.Context, id int64) (*Transaction,
 
 func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
 	query := `
-		SELECT id, category_id, amount, running_balance, description, created_at, updated_at
+		SELECT id, category_id, amount, running_balance, description, created_at, updated_at, date
 		FROM transactions
 		ORDER BY id DESC
 		LIMIT 1
@@ -155,6 +162,7 @@ func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
 		&transaction.Description,
 		&transaction.CreatedAt,
 		&transaction.UpdatedAt,
+		&transaction.Date,
 	)
 
 	if err != nil {

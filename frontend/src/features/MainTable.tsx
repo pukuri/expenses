@@ -9,7 +9,7 @@ interface NullString {
 
 interface Transaction {
   id: number;
-  created_at: string;
+  date: string;
   amount: number;
   running_balance: number;
   description: string;
@@ -54,7 +54,7 @@ export default function MainTable() {
         <tbody className="bg-gray-800">
           {data.data.map((datum: Transaction) => (
             <tr key={datum.id} style={{backgroundColor: datum.category_color.String}}>
-              <td className={tbodyClass}>{DateConverter(datum.created_at)}</td>
+              <td className={tbodyClass}>{DateConverter(datum.date)}</td>
               <td className={tbodyClass}>{AmountFormatter(datum.amount)}</td>
               <td className={tbodyClass}>{AmountFormatter(datum.running_balance)}</td>
               <td className={tbodyClass}>{datum.description}</td>
