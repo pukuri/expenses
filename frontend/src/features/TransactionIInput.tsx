@@ -37,52 +37,51 @@ export default function TransactionInput() {
       setLoading(false)
     }
   }
+  
+  const inputStyle = "w-full px-2 py-1 border border-gray-600 rounded-md focus:border-blue-500 text-sm my-2"
 
   return (
-    <div className="absolute bottom-0 p-10 w-2/3">
-      <div className="w-full p-4 bottom-0 right-0 rounded-md bg-yellow-50 drop-shadow-lg">
-        <form onSubmit={handleSubmit} className="flex flex-row gap-2">
-          <div className="w-2/12 flex flex-col">
-            <label className="text-xs">Date</label>
-            <input 
-              type="date" 
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })} 
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-blue-500 text-sm"
-              required></input>
-          </div>
-          <div className="w-2/12 flex flex-col">
-            <label className="text-xs">Amount</label>
-            <input 
-              type="number" 
-              onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) || 0 })} 
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-blue-500 text-sm"
-              required></input>
-          </div>
-          <div className="w-3/12 flex flex-col">
-            <label className="text-xs">Description</label>
-            <input 
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-blue-500 text-sm"
-              required></input>
-          </div>
-          <div className="w-3/12 flex flex-col">
-            <label className="text-xs">Category</label>
-            <select 
-              onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })}
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:border-blue-500 text-sm">
-              {categories.map((cat) => (
-                <option key={cat.id || 0} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="w-1/12">
-            <button type="submit" className="bg-green-600 p-2 w-full rounded-sm" disabled={loading}>
-              {loading ? <Loader color="white"/> : <Send color="white"/> }
-            </button>
-          </div>
-        </form>
-      </div>
-      
+    <div className="w-full p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white drop-shadow-lg">
+      <form onSubmit={handleSubmit} className="flex flex-row gap-2">
+        <div className="w-2/12 flex flex-col">
+          <label className="text-xs">Date</label>
+          <input 
+            type="date" 
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })} 
+            className={inputStyle}
+            required></input>
+        </div>
+        <div className="w-2/12 flex flex-col">
+          <label className="text-xs">Amount</label>
+          <input 
+            type="number" 
+            onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) || 0 })} 
+            className={inputStyle}
+            required></input>
+        </div>
+        <div className="w-3/12 flex flex-col">
+          <label className="text-xs">Description</label>
+          <input 
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+            className={inputStyle}
+            required></input>
+        </div>
+        <div className="w-3/12 flex flex-col">
+          <label className="text-xs">Category</label>
+          <select 
+            onChange={(e) => setFormData({ ...formData, category_id: Number(e.target.value) })}
+            className={inputStyle}>
+            {categories.map((cat) => (
+              <option key={cat.id || 0} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="w-2/12">
+          <button type="submit" className="bg-green-600 p-2 w-full rounded-sm mt-4" disabled={loading}>
+            {loading ? <Loader color="white" height={19}/> : <Send color="white" height={19}/> }
+          </button>
+        </div>
+      </form>
     </div>
   )
 }

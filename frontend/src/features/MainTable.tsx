@@ -36,11 +36,12 @@ export default function MainTable() {
     fetchData().then(setData).catch(console.error);
   }, []);
 
-  const theadClass = "border-b p-4 pt-0 pb-3 pl-8 text-left font-medium border-gray-600 text-gray-200"
-  const tbodyClass = "border-b p-2 border-gray-700 text-gray-200"
+  const theadClass = "border-b p-4 pt-0 pb-3 pl-4 text-left font-medium border-none text-gray-200"
+  const tbodyClassOdd = "border-b p-4 bg-neutral-1 border-none text-gray-200"
+  const tbodyClassEven = "border-b p-4 bg-neutral-2 border-none text-gray-200"
 
   return (
-    <div className="pt-4 bg-gray-950/50">
+    <div className="pt-4 bg-neutral-1">
       <table className="w-full table-auto border-collapse text-sm">
         <thead>
           <tr>
@@ -52,23 +53,25 @@ export default function MainTable() {
           </tr>
         </thead>
         <tbody className="bg-gray-800">
-          {data.data.map((datum: Transaction) => (
-            <tr key={datum.id} style={{backgroundColor: datum.category_color.String}}>
-              <td className={tbodyClass}>{DateConverter(datum.date)}</td>
-              <td className={tbodyClass}>{AmountFormatter(datum.amount)}</td>
-              <td className={tbodyClass}>{AmountFormatter(datum.running_balance)}</td>
-              <td className={tbodyClass}>{datum.description}</td>
-              <td className={tbodyClass}>
-                <span
-                  style={{
-                    backgroundColor: datum.category_color.String,
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    color: 'white'
-                  }}
-                >
-                  {datum.category_name.String}
-                </span>
+          {data.data.map((datum: Transaction, index: number) => (
+            <tr key={datum.id}>
+              <td className={index%2 == 0 ? tbodyClassEven : tbodyClassOdd}>{DateConverter(datum.date)}</td>
+              <td className={index%2 == 0 ? tbodyClassEven : tbodyClassOdd}>{AmountFormatter(datum.amount)}</td>
+              <td className={index%2 == 0 ? tbodyClassEven : tbodyClassOdd}>{AmountFormatter(datum.running_balance)}</td>
+              <td className={index%2 == 0 ? tbodyClassEven : tbodyClassOdd}>{datum.description}</td>
+              <td className={index%2 == 0 ? tbodyClassEven : tbodyClassOdd}>
+                {datum.category_name.String != '' && 
+                  <span
+                    style={{
+                      border: `1px solid ${datum.category_color.String}`,
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      color: 'white'
+                    }}
+                  >
+                    {datum.category_name.String}
+                  </span>
+                }
               </td>
             </tr>
           ))}
