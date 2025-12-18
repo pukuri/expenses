@@ -25,7 +25,6 @@ func (app *application) googleAuth(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) googleCallback(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
-	state := r.URL.Query().Get("state")
 
 	// exchange code for token
 	ctx := context.Background()
@@ -86,5 +85,50 @@ func (app *application) googleCallback(w http.ResponseWriter, r *http.Request) {
 		Secure:   false,
 	})
 
-	http.Redirect(w, r, "http://localhost:5173"+state, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "http://localhost:5173/dashboard", http.StatusTemporaryRedirect)
+}
+
+func (app *application) googleLogout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1, // Delete immediately
+		HttpOnly: true,
+		Secure:   false,
+	})
+
+	http.Redirect(w, r, "http://localhost:5173/", http.StatusSeeOther)
+}
+
+func (app *application) googleLoggedUser(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		app.forbidden(w, r, err)
+		return
+	}
+
+	secret := []byte(app.config.JwtSecret)
+	token, err := jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
+	})
+	if err != nil || !token.Valid {
+		app.forbidden(w, r, err)
+		return
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+	userId := int64(claims["user_id"].(float64))
+
+	ctx := r.Context()
+	user, err := app.store.Users.GetById(ctx, userId)
+	if err != nil {
+		app.forbidden(w, r, err)
+		return
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, user); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
 }

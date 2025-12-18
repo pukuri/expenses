@@ -28,6 +28,7 @@ type Storage struct {
 	}
 	Users interface {
 		Upsert(context.Context, *User) error
+		GetById(context.Context, int64) (*User, error)
 	}
 }
 

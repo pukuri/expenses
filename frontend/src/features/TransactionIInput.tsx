@@ -14,8 +14,8 @@ interface Transaction {
 
 export default function TransactionInput({ fetchTransactions }: { fetchTransactions: () => void }) {
   const [formData, setFormData] = useState<Transaction>({ amount: 0, description: '', category_id: 0, date: '' });
-  const [loading, setLoading] = useState(false);
-  const [inputReady, setInputReady] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [inputReady, setInputReady] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([ {id: undefined, name: 'Uncategorized'} ]);
   
   const fetchCategories = async(): Promise<void> => {

@@ -14,9 +14,9 @@ import (
 )
 
 type application struct {
-	config *config.Config
-	store  store.Storage
-	oauthConfig   *oauth2.Config
+	config      *config.Config
+	store       store.Storage
+	oauthConfig *oauth2.Config
 }
 
 func (app *application) mount() http.Handler {
@@ -40,11 +40,13 @@ func (app *application) mount() http.Handler {
 
 	r.Route("/api", func(r chi.Router) {
 		r.Route("/auth", func(r chi.Router) {
-			r.Get("/google", app.googleAuth)	
-			r.Get("/google/callback", app.googleCallback)	
+			r.Get("/google", app.googleAuth)
+			r.Get("/google/callback", app.googleCallback)
+			r.Post("/logout", app.googleLogout)
+			r.Get("/logged_user", app.googleLoggedUser)
 		})
-		
-		r.Route("/v1", func (r chi.Router)  {
+
+		r.Route("/v1", func(r chi.Router) {
 			r.Get("/health", app.healthCheckHandler)
 
 			r.Route("/transactions", func(r chi.Router) {
