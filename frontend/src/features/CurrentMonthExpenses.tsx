@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import AmountFormatter from "../utils/AmountFormatter";
 
-export default function CurrentBalance() {
+export default function CurrentMonthExpenses() {
   const [amount, setAmount] = useState<number>(0)
   
   const fetchAmount = async (): Promise<void> => {
     try {
-      const response = await fetch("/api/v1/current_month_expenses")
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = (now.getMonth() + 1).toString().padStart(2, '0')
+      const day = now.getDate().toString().padStart(2, '0')
+      const dateParams = `${year}-${month}-${day}`
+      const response = await fetch("/api/v1/expenses_by_month?" + new URLSearchParams({
+        date: dateParams
+      }))
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const result = await response.json()
       setAmount(result.data.amount)
-      
     } catch (err) {
       console.log(err)
     }

@@ -5,6 +5,8 @@ import TransactionInput from '../features/TransactionIInput'
 import CurrentBalance from '../features/CurrentBalance';
 import CurrentMonthExpenses from '../features/CurrentMonthExpenses';
 import { useAuth } from '../contexts/AuthContext';
+import LastDateBalance from '../features/LastDateBalance';
+import LastMonthExpenses from '../features/LastMonthExpenses';
 
 interface NullString {
   String: string;
@@ -76,11 +78,10 @@ function Dashboard() {
             <CurrentMonthExpenses /> 
           </div>
           <div className={cardStyle}>
-            <h1>This date last month balance</h1>
-            <CurrentBalance data={data}/> 
+            <LastDateBalance /> 
           </div>
           <div className={cardStyle}>
-            <CurrentBalance data={data}/> 
+            <LastMonthExpenses /> 
           </div>
         </div>
         <div className={`h-180 overflow-scroll static w-2/3 mx-5 mt-5 ${cardStyle}`}>

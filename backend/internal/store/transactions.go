@@ -176,12 +176,12 @@ func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
 	return &transaction, nil
 }
 
-func (s *TransactionStore) GetCurrentMonthExpenses(ctx context.Context) (int64, error) {
+func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) (int64, error) {
 	query := `
-		SELECT SUM(amount)
+		SELECT COALESCE(SUM(amount), 0)
 		FROM transactions
-		WHERE date >= date_trunc('month', CURRENT_DATE)::date
-			AND date < date_trunc('month', CURRENT_DATE + INTERVAL '1 month')::date;
+		WHERE date >= date_trunc('month', $1::date)
+			AND date < date_trunc('month', $1::date) + INTERVAL '1 month';
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -189,14 +189,43 @@ func (s *TransactionStore) GetCurrentMonthExpenses(ctx context.Context) (int64, 
 
 	var returnValue int64
 	err := s.db.QueryRowContext(
-		ctx, query,
+		ctx,
+		query,
+		date,
+	).Scan(
+		&returnValue,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return returnValue, nil
+}
+
+func (s *TransactionStore) GetBalanceByDate(ctx context.Context, date string) (int64, error) {
+	query := `
+		SELECT COALESCE(running_balance, 0)
+		FROM transactions
+		WHERE date = $1::date
+		ORDER BY created_at DESC
+		LIMIT 1
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	var returnValue int64
+	err := s.db.QueryRowContext(
+		ctx,
+		query,
+		date,
 	).Scan(
 		&returnValue,
 	)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return 0, ErrNotFound
+			return 0, nil
 		default:
 			return 0, err
 		}

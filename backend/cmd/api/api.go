@@ -47,7 +47,7 @@ func (app *application) mount() http.Handler {
 		})
 
 		r.Route("/v1", func(r chi.Router) {
-			r.Use(app.authentication)
+			r.Use(app.authenticationMiddleware)
 			r.Get("/health", app.healthCheckHandler)
 
 			r.Route("/transactions", func(r chi.Router) {
@@ -63,7 +63,8 @@ func (app *application) mount() http.Handler {
 				})
 			})
 
-			r.Get("/current_month_expenses", app.GetCurrentMonthExpensesHandler)
+			r.Get("/expenses_by_month", app.getExpensesByMonthHandler)
+			r.Get("/balance_by_date", app.getBalanceByDateHandler)
 
 			r.Route("/categories", func(r chi.Router) {
 				r.Post("/", app.createCategoryHandler)

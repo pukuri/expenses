@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -84,9 +85,11 @@ func (app *application) getTransactionHandler(w http.ResponseWriter, r *http.Req
 	}
 }
 
-func (app *application) GetCurrentMonthExpensesHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) getExpensesByMonthHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	amount, err := app.store.Transactions.GetCurrentMonthExpenses(ctx)
+	date := r.URL.Query().Get("date")
+	log.Println(date)
+	amount, err := app.store.Transactions.GetExpensesByMonth(ctx, date)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return
@@ -96,7 +99,26 @@ func (app *application) GetCurrentMonthExpensesHandler(w http.ResponseWriter, r 
 		Amount any `json:"amount"`
 	}
 
-	if err := app.jsonResponse(w, http.StatusOK, &wrapper{ Amount: amount }); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, &wrapper{Amount: amount}); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
+
+func (app *application) getBalanceByDateHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	date := r.URL.Query().Get("date")
+	amount, err := app.store.Transactions.GetBalanceByDate(ctx, date)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	type wrapper struct {
+		Amount any `json:"amount"`
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, &wrapper{Amount: amount}); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
