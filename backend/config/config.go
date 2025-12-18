@@ -14,10 +14,19 @@ type DBConfig struct {
 	MaxIdleTime  string `env:"DB_MAX_IDLE_TIME"  envDefault:"15m"`
 }
 
+type GoogleConfig struct {
+	ClientID     string `env:"GOAUTH_CLIENT_ID"`
+	ClientSecret string `env:"GOAUTH_CLIENT_SECRET"`
+	RedirectUri  string `env:"GOOGLE_REDIRECT_URI"`
+}
+
 type Config struct {
-	Addr string `env:"ADDR" envDefault:":8080"`
-	DB   DBConfig
-	Env  string `env:"ENV" envDefault:"development"`
+	Addr            string `env:"ADDR" envDefault:":8080"`
+	DB              DBConfig
+	Env             string `env:"ENV" envDefault:"development"`
+	Google          GoogleConfig
+	JwtSecret       string `env:"JWT_SECRET"`
+	AllowedGoogleID string `env:"ALLOWED_GOOGLE_ID"`
 }
 
 func Load() (*Config, error) {

@@ -26,11 +26,15 @@ type Storage struct {
 		Create(context.Context, *Category) error
 		Index(context.Context) ([]Category, error)
 	}
+	Users interface {
+		Upsert(context.Context, *User) error
+	}
 }
 
 func NewStorage(db *sql.DB) Storage {
 	return Storage{
 		Transactions: &TransactionStore{db},
 		Categories:   &CategoryStore{db},
+		Users:        &UserStore{db},
 	}
 }

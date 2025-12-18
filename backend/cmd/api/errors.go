@@ -19,3 +19,8 @@ func (app *application) notFound(w http.ResponseWriter, r *http.Request, err err
 	log.Printf("not found: %s path: %s error: %s", r.Method, r.URL.Path, err)
 	writeJSONError(w, http.StatusNotFound, "resource not found")
 }
+
+func (app *application) forbidden(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("forbidden: found: %s path: %s error: %s", r.Method, r.URL.Path, err)
+	writeJSONError(w, http.StatusForbidden, "Access denied. Only authorized account allowed.")
+}

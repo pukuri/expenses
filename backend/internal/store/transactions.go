@@ -52,7 +52,6 @@ func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction)
 		&transaction.CreatedAt,
 		&transaction.UpdatedAt,
 	)
-
 	if err != nil {
 		return err
 	}

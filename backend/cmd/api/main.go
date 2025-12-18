@@ -7,6 +7,8 @@ import (
 	"github.com/pukuri/expenses/config"
 	"github.com/pukuri/expenses/internal/db"
 	"github.com/pukuri/expenses/internal/store"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 const version = "0.0.1"
@@ -24,9 +26,21 @@ func main() {
 	defer db.Close()
 	log.Println("database connection pool established")
 
+	oauthConfig := &oauth2.Config{
+		ClientID:     cfg.Google.ClientID,
+		ClientSecret: cfg.Google.ClientSecret,
+		RedirectURL:  cfg.Google.RedirectUri,
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email",
+			"https://www.googleapis.com/auth/userinfo.profile",
+		},
+		Endpoint: google.Endpoint,
+	}
+
 	app := &application{
-		config: cfg,
-		store:  store.NewStorage(db),
+		config:      cfg,
+		store:       store.NewStorage(db),
+		oauthConfig: oauthConfig,
 	}
 
 	mux := app.mount()

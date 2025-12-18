@@ -10,11 +10,13 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/pukuri/expenses/config"
 	"github.com/pukuri/expenses/internal/store"
+	"golang.org/x/oauth2"
 )
 
 type application struct {
 	config *config.Config
 	store  store.Storage
+	oauthConfig   *oauth2.Config
 }
 
 func (app *application) mount() http.Handler {
@@ -36,27 +38,34 @@ func (app *application) mount() http.Handler {
 
 	r.Use(middleware.Timeout(10 * time.Second))
 
-	r.Route("/api/v1", func(r chi.Router) {
-		r.Get("/health", app.healthCheckHandler)
-
-		r.Route("/transactions", func(r chi.Router) {
-			r.Post("/", app.createTransactionHandler)
-			r.Get("/", app.indexTransactionHandler)
-
-			r.Route("/{transactionID}", func(r chi.Router) {
-				r.Use(app.transactionContextMiddleware)
-
-				r.Get("/", app.getTransactionHandler)
-				r.Delete("/", app.deleteTransactionHandler)
-				r.Patch("/", app.updateTransactionHandler)
-			})
+	r.Route("/api", func(r chi.Router) {
+		r.Route("/auth", func(r chi.Router) {
+			r.Get("/google", app.googleAuth)	
+			r.Get("/google/callback", app.googleCallback)	
 		})
+		
+		r.Route("/v1", func (r chi.Router)  {
+			r.Get("/health", app.healthCheckHandler)
 
-		r.Get("/current_month_expenses", app.GetCurrentMonthExpensesHandler)
+			r.Route("/transactions", func(r chi.Router) {
+				r.Post("/", app.createTransactionHandler)
+				r.Get("/", app.indexTransactionHandler)
 
-		r.Route("/categories", func(r chi.Router) {
-			r.Post("/", app.createCategoryHandler)
-			r.Get("/", app.indexCategoryHandler)
+				r.Route("/{transactionID}", func(r chi.Router) {
+					r.Use(app.transactionContextMiddleware)
+
+					r.Get("/", app.getTransactionHandler)
+					r.Delete("/", app.deleteTransactionHandler)
+					r.Patch("/", app.updateTransactionHandler)
+				})
+			})
+
+			r.Get("/current_month_expenses", app.GetCurrentMonthExpensesHandler)
+
+			r.Route("/categories", func(r chi.Router) {
+				r.Post("/", app.createCategoryHandler)
+				r.Get("/", app.indexCategoryHandler)
+			})
 		})
 	})
 

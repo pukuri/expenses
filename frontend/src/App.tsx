@@ -47,6 +47,12 @@ function App() {
 
   return (
     <div className="pb-10 bg-background">
+      <div className='text-white'>
+        <h1>Test Google Login</h1>
+        <a href="http://localhost:8080/api/auth/google?state=/dashboard">
+            <button>Login with Google</button>
+        </a>
+      </div>
       <div className='flex flex-col'>
         <h1 className='m-5 text-xl text-white'>Welcome!</h1>
         <div className='mx-5 flex flex-row gap-5'>
