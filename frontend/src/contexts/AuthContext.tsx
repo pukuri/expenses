@@ -59,7 +59,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function ProtectedRoute({children}: { children: React.ReactNode}) {
   const { user, loading } = useAuth()
-  const location = useLocation()
   
   if(loading) {
     return <div>Loading...</div>

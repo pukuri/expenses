@@ -76,6 +76,7 @@ function Dashboard() {
             <CurrentMonthExpenses /> 
           </div>
           <div className={cardStyle}>
+            <h1>This date last month balance</h1>
             <CurrentBalance data={data}/> 
           </div>
           <div className={cardStyle}>

@@ -11,10 +11,6 @@ import (
 	"github.com/pukuri/expenses/internal/store"
 )
 
-type transactionKey string
-
-const transactionCtx transactionKey = "transaction"
-
 type CreateTransactionPayload struct {
 	CategoryID     *int64 `json:"category_id"`
 	Amount         int64  `json:"amount" validate:"required"`
@@ -202,9 +198,4 @@ func (app *application) transactionContextMiddleware(next http.Handler) http.Han
 		ctx = context.WithValue(ctx, transactionCtx, transaction)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func getTransactionFromCtx(r *http.Request) *store.Transaction {
-	transaction, _ := r.Context().Value(transactionCtx).(*store.Transaction)
-	return transaction
 }
