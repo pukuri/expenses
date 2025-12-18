@@ -88,6 +88,24 @@ func (app *application) getTransactionHandler(w http.ResponseWriter, r *http.Req
 	}
 }
 
+func (app *application) GetCurrentMonthExpensesHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	amount, err := app.store.Transactions.GetCurrentMonthExpenses(ctx)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	type wrapper struct {
+		Amount any `json:"amount"`
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, &wrapper{ Amount: amount }); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
+
 func (app *application) indexTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

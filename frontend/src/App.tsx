@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import MainTable from './features/MainTable'
 import TransactionInput from './features/TransactionIInput'
+import CurrentBalance from './features/CurrentBalance';
+import CurrentMonthExpenses from './features/CurrentMonthExpenses';
 
 interface NullString {
   String: string;
@@ -40,19 +42,34 @@ function App() {
   useEffect(() => {
     fetchTransactions().catch(console.error);
   }, []);
+  
+  const cardStyle = 'rounded-md border-1 border-gray-800'
 
   return (
-    <div className="h-screen bg-background">
+    <div className="pb-10 bg-background">
       <div className='flex flex-col'>
         <h1 className='m-5 text-xl text-white'>Welcome!</h1>
-        <div className='h-180 overflow-scroll static mx-5 w-2/3 rounded-md drop-shadow-xl'>
+        <div className='mx-5 flex flex-row gap-5'>
+          <div className={cardStyle}>
+            <CurrentBalance data={data}/> 
+          </div>
+          <div className={cardStyle}>
+            <CurrentMonthExpenses /> 
+          </div>
+          <div className={cardStyle}>
+            <CurrentBalance data={data}/> 
+          </div>
+          <div className={cardStyle}>
+            <CurrentBalance data={data}/> 
+          </div>
+        </div>
+        <div className={`h-180 overflow-scroll static w-2/3 mx-5 mt-5 ${cardStyle}`}>
           <MainTable data={data} />
         </div>
-        <div className="m-5 w-2/3 rounded-md drop-shadow-xl">
+        <div className={`w-2/3 mx-5 mt-5 ${cardStyle}`}>
           <TransactionInput fetchTransactions={fetchTransactions} />
         </div>
       </div>
-      {/* <div className="bg-red-200 w-1/3 p-4">Div 1</div> */}
     </div>
   )
 }

@@ -177,6 +177,35 @@ func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
 	return &transaction, nil
 }
 
+func (s *TransactionStore) GetCurrentMonthExpenses(ctx context.Context) (int64, error) {
+	query := `
+		SELECT SUM(amount)
+		FROM transactions
+		WHERE date >= date_trunc('month', CURRENT_DATE)::date
+			AND date < date_trunc('month', CURRENT_DATE + INTERVAL '1 month')::date;
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	var returnValue int64
+	err := s.db.QueryRowContext(
+		ctx, query,
+	).Scan(
+		&returnValue,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return 0, ErrNotFound
+		default:
+			return 0, err
+		}
+	}
+
+	return returnValue, nil
+}
+
 func (s *TransactionStore) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM transactions WHERE id = $1`
 

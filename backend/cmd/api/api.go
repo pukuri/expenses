@@ -52,6 +52,8 @@ func (app *application) mount() http.Handler {
 			})
 		})
 
+		r.Get("/current_month_expenses", app.GetCurrentMonthExpensesHandler)
+
 		r.Route("/categories", func(r chi.Router) {
 			r.Post("/", app.createCategoryHandler)
 			r.Get("/", app.indexCategoryHandler)
