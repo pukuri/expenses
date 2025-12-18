@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import AmountFormatter from "../utils/AmountFormatter"
 import DateConverter from "../utils/DateConverter"
 
@@ -21,21 +20,7 @@ interface TransactionsResponse {
   data: Transaction[];
 }
 
-const fetchData = async (): Promise<TransactionsResponse> => {
-  const response = await fetch("/api/v1/transactions")
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-  const result = await response.json()
-  return result
-}
-
-export default function MainTable() {
-  const [data, setData] = useState<TransactionsResponse>({ data: [] })
-  useEffect(() => {
-    fetchData().then(setData).catch(console.error);
-  }, []);
-
+export default function MainTable({ data }: { data: TransactionsResponse }) {
   const theadClass = "border-b p-4 pt-0 pb-3 pl-4 text-left font-medium border-none text-gray-200"
   const tbodyClassOdd = "border-b p-4 bg-neutral-1 border-none text-gray-200"
   const tbodyClassEven = "border-b p-4 bg-neutral-2 border-none text-gray-200"
