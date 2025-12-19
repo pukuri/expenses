@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import AmountFormatter from "../utils/AmountFormatter";
 
-interface NullString {
-  String: string;
-  Valid: boolean;
-}
-
 export default function LastDateBalance() {
   const [balance, setBalance] = useState<number>(0)
   

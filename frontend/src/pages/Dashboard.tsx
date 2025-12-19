@@ -63,7 +63,7 @@ function Dashboard() {
     fetchTransactions().catch(console.error)
   }, []);
   
-  const cardStyle = 'rounded-md border-1 border-gray-800'
+  const cardStyle = 'rounded-md border-1 border-gray-700'
 
   return (
     <div className="pb-10 bg-background">
