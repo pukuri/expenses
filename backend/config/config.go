@@ -27,6 +27,7 @@ type Config struct {
 	Google          GoogleConfig
 	JwtSecret       string `env:"JWT_SECRET"`
 	AllowedGoogleID string `env:"ALLOWED_GOOGLE_ID"`
+	FrontendURL     string `env:"FRONTEND_URL"`
 }
 
 func Load() (*Config, error) {

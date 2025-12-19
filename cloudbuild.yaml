@@ -1,4 +1,5 @@
 steps:
+# Frontend steps
 - name: 'gcr.io/cloud-builders/npm'
   args: ['ci']
   dir: 'frontend'
@@ -9,6 +10,16 @@ steps:
   args: ['rsync', '-R', 'frontend/dist/', 'gs://expenses.fachriakbarr.com/']
   dir: '.'
     
+# Backend steps
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/expenses-backend', '.']
+  dir: 'backend'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/expenses-backend']
+  dir: 'backend'
+- name: 'gcr.io/google.com/cloudsdktool/gcloud'
+  args: ['run', 'deploy', 'expenses-backend', '--image=gcr.io/$PROJECT_ID/expenses-backend', '--platform=managed', '--allow-unauthenticated']
+
 substitutions:
   _BUCKET: 'expenses.fachriakbarr.com'
 

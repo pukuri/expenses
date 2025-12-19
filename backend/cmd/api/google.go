@@ -85,7 +85,7 @@ func (app *application) googleCallback(w http.ResponseWriter, r *http.Request) {
 		Secure:   false,
 	})
 
-	http.Redirect(w, r, "http://localhost:5173/dashboard", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, app.config.FrontendURL+"/dashboard", http.StatusTemporaryRedirect)
 }
 
 func (app *application) googleLogout(w http.ResponseWriter, r *http.Request) {
@@ -98,7 +98,7 @@ func (app *application) googleLogout(w http.ResponseWriter, r *http.Request) {
 		Secure:   false,
 	})
 
-	http.Redirect(w, r, "http://localhost:5173/", http.StatusSeeOther)
+	http.Redirect(w, r, app.config.FrontendURL, http.StatusSeeOther)
 }
 
 func (app *application) googleLoggedUser(w http.ResponseWriter, r *http.Request) {
