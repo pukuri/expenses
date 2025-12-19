@@ -17,7 +17,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/expenses-backend']
   dir: 'backend'
-- name: 'gcr.io/google.com/cloudsdktool/gcloud:492.0.0-slim'
+- name: 'gcr.io/cloud-builders/gcloud'
   args: ['run', 'deploy', 'expenses-backend', '--image=gcr.io/$PROJECT_ID/expenses-backend', '--platform=managed', '--allow-unauthenticated']
 
 substitutions:
