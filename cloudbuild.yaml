@@ -1,31 +1,13 @@
 steps:
-# Frontend: Docker build
-  - name: 'gcr.io/cloud-builders/docker'
-    args: 
-    - 'build'
-    - '-t'
-    - 'gcr.io/$PROJECT_ID/expenses-frontend'
-    - '.'
-    dir: 'frontend'
-
-  # Extract build artifacts from container
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-    - 'create'
-    - '--name=extract-frontend'
-    - 'gcr.io/$PROJECT_ID/expenses-frontend'
-    dir: 'frontend'
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['cp', 'extract-frontend:/app/dist/.', './dist']
-    dir: 'frontend'
-
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['rsync', '-R', 'frontend/dist/', 'gs://expenses.fachriakbarr.com/']
-
-  # Cleanup
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['rm', 'extract-frontend']
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['ci']
+  dir: 'frontend'
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['run', 'build']  # Creates frontend/dist/
+  dir: 'frontend'
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['rsync', '-R', 'frontend/dist/', 'gs://expenses.fachriakbarr.com/']
+  dir: '.'
     
 substitutions:
   _BUCKET: 'expenses.fachriakbarr.com'
