@@ -28,5 +28,5 @@ options:
   machineType: 'E2_HIGHCPU_8'
   
 secrets:
-  - secretEnv:
+  secretEnv:
     DB_ADDR: "projects/410166686950/secrets/db-addr/versions/latest"
