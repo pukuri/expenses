@@ -18,7 +18,7 @@ steps:
   args: ['push', 'gcr.io/$PROJECT_ID/expenses-backend']
   dir: 'backend'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', 'expenses-backend', '--image=gcr.io/$PROJECT_ID/expenses-backend', '--platform=managed', '--region=asia-southeast1', '--add-cloudsql-instances=$_INSTANCE_CONNECTION_NAME', '--allow-unauthenticated']
+  args: ['run', 'deploy', 'expenses-backend', '--image=gcr.io/$PROJECT_ID/expenses-backend', '--platform=managed', '--region=asia-southeast1', '--add-cloudsql-instances=$_INSTANCE_CONNECTION_NAME', '--set-env-vars=ENV=production,DB_USER=$DB_USER,DB_PASSWORD=$DB_PASSWORD,DB_NAME=$DB_NAME,INSTANCE_CONNECTION_NAME=$INSTANCE_CONNECTION_NAME', '--allow-unauthenticated']
 
 substitutions:
   _BUCKET: 'expenses.fachriakbarr.com'
@@ -28,5 +28,8 @@ options:
   machineType: 'E2_HIGHCPU_8'
   
 secrets:
-  secretEnv:
-    DB_ADDR: "projects/410166686950/secrets/db-addr/versions/latest"
+  - secretEnv:
+    DB_USER: "projects/410166686950/secrets/db-user/versions/latest"
+    DB_PASSWORD: "projects/410166686950/secrets/db-password/versions/latest"
+    DB_NAME: "projects/410166686950/secrets/db-name/versions/latest"
+    INSTANCE_CONNECTION_NAME: "projects/410166686950/secrets/instance-connection-name/versions/latest"

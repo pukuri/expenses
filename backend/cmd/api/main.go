@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, err := db.New(cfg.DB.Addr, cfg.DB.MaxOpenConns, cfg.DB.MaxIdleConns, cfg.DB.MaxIdleTime)
+	db, err := db.New(cfg)
 	if err != nil {
 		log.Panic(err)
 	}

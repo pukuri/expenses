@@ -3,18 +3,28 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
+
+	"github.com/pukuri/expenses/config"
 )
 
-func New(addr string, maxOpenConns, maxIdleConns int, maxIdleTime string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", addr)
+func New(cfg *config.Config) (*sql.DB, error) {
+	var dsn string
+	if cfg.Env == "production" {
+		dsn = fmt.Sprintf("user=%s password=%s database=%s host=/cloudsql/%s", cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.InstanceConnectionName)
+	} else {
+		dsn = cfg.DB.Addr
+	}
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(maxOpenConns)
-	db.SetMaxIdleConns(maxIdleConns)
-	duration, err := time.ParseDuration(maxIdleTime)
+	db.SetMaxOpenConns(cfg.DB.MaxOpenConns)
+	db.SetMaxIdleConns(cfg.DB.MaxIdleConns)
+	duration, err := time.ParseDuration(cfg.DB.MaxIdleTime)
 	if err != nil {
 		return nil, err
 	}

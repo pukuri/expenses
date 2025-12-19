@@ -9,10 +9,14 @@ import (
 )
 
 type DBConfig struct {
-	Addr         string `env:"DB_ADDR"`
-	MaxOpenConns int    `env:"DB_MAX_OPEN_CONNS" envDefault:"25"`
-	MaxIdleConns int    `env:"DB_MAX_IDLE_CONNS" envDefault:"25"`
-	MaxIdleTime  string `env:"DB_MAX_IDLE_TIME"  envDefault:"15m"`
+	Addr                   string `env:"DB_ADDR"`
+	MaxOpenConns           int    `env:"DB_MAX_OPEN_CONNS" envDefault:"25"`
+	MaxIdleConns           int    `env:"DB_MAX_IDLE_CONNS" envDefault:"25"`
+	MaxIdleTime            string `env:"DB_MAX_IDLE_TIME"  envDefault:"15m"`
+	User                   string `env:"DB_USER"`
+	Password               string `env:"DB_PASS"`
+	Name                   string `env:"DB_NAME"`
+	InstanceConnectionName string `env:"INSTANCE_CONNECTION_NAME"`
 }
 
 type GoogleConfig struct {

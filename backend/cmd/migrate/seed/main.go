@@ -16,7 +16,7 @@ func main() {
 		log.Fatal("cannot load config:", err)
 	}
 
-	conn, err := db.New(cfg.DB.Addr, 3, 3, "15m")
+	conn, err := db.New(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
