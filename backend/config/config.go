@@ -22,7 +22,7 @@ type GoogleConfig struct {
 }
 
 type Config struct {
-	Addr            string `env:"ADDR"`
+	Addr            string `env:"ADDR" envDefault:"0.0.0.0"`
 	Port            int    `env:"PORT" envDefault:"8080"`
 	DB              DBConfig
 	Env             string `env:"ENV" envDefault:"development"`
@@ -45,9 +45,7 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 
-	if cfg.Addr == "" {
-		cfg.Addr = fmt.Sprintf("0.0.0.0:%d", cfg.Port)
-	}
+	cfg.Addr = fmt.Sprintf("%s:%d", cfg.Addr, cfg.Port)
 
 	return cfg, nil
 }
