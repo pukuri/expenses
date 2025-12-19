@@ -21,7 +21,7 @@ type GoogleConfig struct {
 }
 
 type Config struct {
-	Addr            string `env:"ADDR" envDefault:":8080"`
+	Addr            string `env:"ADDR" envDefault:"0.0.0.0:8080"`
 	DB              DBConfig
 	Env             string `env:"ENV" envDefault:"development"`
 	Google          GoogleConfig
