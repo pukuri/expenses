@@ -26,3 +26,10 @@ steps:
   # Cleanup
   - name: 'gcr.io/cloud-builders/docker'
     args: ['rm', 'extract-frontend']
+    
+substitutions:
+  _BUCKET: 'expenses.fachriakbarr.com'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
