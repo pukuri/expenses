@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/caarlos0/env/v6"
@@ -21,7 +22,8 @@ type GoogleConfig struct {
 }
 
 type Config struct {
-	Addr            string `env:"ADDR" envDefault:"0.0.0.0:8080"`
+	Addr            string `env:"ADDR"`
+	Port            int    `env:"PORT" envDefault:"8080"`
 	DB              DBConfig
 	Env             string `env:"ENV" envDefault:"development"`
 	Google          GoogleConfig
@@ -41,6 +43,10 @@ func Load() (*Config, error) {
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
 		return nil, err
+	}
+
+	if cfg.Addr == "" {
+		cfg.Addr = fmt.Sprintf("0.0.0.0:%d", cfg.Port)
 	}
 
 	return cfg, nil
