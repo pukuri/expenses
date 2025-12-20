@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -21,7 +22,13 @@ func main() {
 
 	db, err := db.New(cfg)
 	if err != nil {
-		log.Panic(err)
+		fmt.Printf("DB_USER='%s'\n", cfg.DB.User)
+		fmt.Printf("DB_PASSWORD='%s'\n", cfg.DB.Password)
+		fmt.Printf("DB_NAME='%s'\n", cfg.DB.Name)
+		fmt.Printf("INSTANCE_CONNECTION_NAME='%s'\n", cfg.DB.InstanceConnectionName)
+
+		fmt.Printf("SQL.OPEN ERROR: %v\n", err)
+		return
 	}
 	defer db.Close()
 	log.Println("database connection pool established")
