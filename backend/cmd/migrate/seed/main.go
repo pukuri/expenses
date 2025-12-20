@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/pukuri/expenses/config"
@@ -15,6 +16,11 @@ func main() {
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
+
+	fmt.Printf("DB_USER='%s'\n", cfg.DB.User)
+	fmt.Printf("DB_PASSWORD='%s'\n", cfg.DB.Password)
+	fmt.Printf("DB_NAME='%s'\n", cfg.DB.Name)
+	fmt.Printf("INSTANCE_CONNECTION_NAME='%s'\n", cfg.DB.InstanceConnectionName)
 
 	conn, err := db.New(cfg)
 	if err != nil {
