@@ -54,7 +54,7 @@ steps:
   - 'migrate/migrate:latest'
   - '-path=/migrations'
   - '-database'
-  - 'postgres://$$DB_USER:$$DB_PASSWORD@/cloudsql/$$_INSTANCE_CONNECTION_NAME/$$DB_NAME?sslmode=disable'
+  - "postgres://$DB_USER:$DB_PASSWORD@unix(/cloudsql/$_INSTANCE_CONNECTION_NAME/.s.PGSQL.5432)/$DB_NAME?sslmode=disable"
   - 'up'
 
 options:
