@@ -12,7 +12,7 @@ import (
 func New(cfg *config.Config) (*sql.DB, error) {
 	var dsn string
 	if cfg.Env == "production" {
-		dsn = fmt.Sprintf("user=%s password=%s database=%s host=/cloudsql/%s", cfg.DB.User, cfg.DB.Password, cfg.DB.Name, cfg.DB.InstanceConnectionName)
+		dsn = fmt.Sprintf("host=/cloudsql/%s user=%s password=%s dbname=%s sslmode=disable", cfg.DB.InstanceConnectionName, cfg.DB.User, cfg.DB.Password, cfg.DB.Name)
 	} else {
 		dsn = cfg.DB.Addr
 	}
