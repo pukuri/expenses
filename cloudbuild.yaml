@@ -50,14 +50,6 @@ steps:
   args:
     - '-c'
     - |
-      # Fetch secrets
-      DB_USER=$$(gcloud secrets versions access latest --secret=db-user)
-      DB_PASSWORD=$$(gcloud secrets versions access latest --secret=db-password)
-      DB_NAME=$$(gcloud secrets versions access latest --secret=db-name)
-      
-      # Construct FULL database URL (no substitutions)
-      DB_URL="postgres://${DB_USER}:${DB_PASSWORD}@/${DB_NAME}?host=/cloudsql/${_INSTANCE_CONNECTION_NAME}&sslmode=disable"
-      
       # Start proxy
       /cloud-sql-proxy $$_INSTANCE_CONNECTION_NAME &
       PROXY_PID=$$!
@@ -68,7 +60,7 @@ steps:
         --env INSTANCE_CONNECTION_NAME=$$_INSTANCE_CONNECTION_NAME \
         migrate/migrate:latest \
         -path=/workspace/backend/cmd/migrate/migrations \
-        -database "$$DB_URL" \
+        -database "postgres://${_DB_USER}:${_DB_PASSWORD}@/${_DB_NAME}?host=/cloudsql/${_INSTANCE_CONNECTION_NAME}&sslmode=disable" \
         up
       
       kill $$PROXY_PID
