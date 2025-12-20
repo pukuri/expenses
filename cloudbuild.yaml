@@ -45,31 +45,46 @@ steps:
     - '--add-cloudsql-instances=$PROJECT_ID:asia-southeast1:expenses-db'
     - '--env-vars-file=env_secrets.env'
     - '--allow-unauthenticated'
-- name: 'gcr.io/cloud-builders/docker'
+- id: 'Start Cloud SQL Proxy'
+  name: 'gcr.io/cloud-builders/docker'
   args:
-  - 'run'
-  - '--rm'
-  - '-d'                    
-  - '-v'
-  - '/workspace:/workspace'
-  - 'gcr.io/cloudsql-docker/gce-proxy:1.33.2'
-  - '/cloud_sql_proxy'
-  - '-instances=${_INSTANCE_CONNECTION_NAME}=tcp:5432'
-  - '-credential_file=/secrets/cloudsql/credentials.json'
-- name: 'gcr.io/cloud-builders/docker'
+    - 'run'
+    - '-d' # Run in detached mode (background)
+    - '--network=cloudbuild' # Use the internal Cloud Build network
+    - '--name=cloudsql-proxy'
+    - 'gcr.io/cloudsql-connectors/cloud-sql-proxy'
+    - ${_CLOUD_SQL_INSTANCE}
+    - '--port=5432'
+    - '--address=127.0.0.1' # Listen only on the local interface (required for the next step)
+
+  # Step 2: Wait for the proxy to start (prevents connection errors)
+- id: 'Wait for Proxy'
+  name: 'bash'
+  args: ['sleep', '5']
+
+  # Step 3: Run the database migration command.
+  # We use the 'golang:latest' builder image, but you might need a custom image
+  # that includes the 'migrate' binary if you compiled it yourself.
+- id: 'Run Database Migrations'
+  name: 'golang:latest' # Replace with a builder image containing 'migrate'
+  entrypoint: 'sh'
   args:
-  - 'run'
-  - '--rm'
-  - '-v'
-  - '/workspace:/workspace'
-  - '--env-file'
-  - '/workspace/env_secrets.env'
-  - 'migrate/migrate:latest'
-  - '-path=/workspace/backend/cmd/migrate/migrations'
-  - '-database'
-  - 'postgres://${_DB_USER}:${_DB_PASSWORD}@localhost:5432/${_DB_NAME}?sslmode=disable'
-  - 'up'
-  - 'wait' 
+    - '-c'
+    - |
+      # Install the 'migrate' CLI if it's not in the image
+      go install github.com/golang-migrate/migrate/cmd/migrate@latest
+      
+      # Execute the migration command, connecting to the proxy at 127.0.0.1
+      /root/go/bin/migrate -path file://backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@127.0.0.1:5432/${_DB_NAME}?sslmode=disable" up
+
+  # Step 4: Stop and clean up the Cloud SQL Proxy container (Optional but recommended)
+- id: 'Stop Cloud SQL Proxy'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'stop'
+    - 'cloudsql-proxy'
+  # This step should run even if the migration failed, so we use `always` execution.
+  waitFor: ['-']
 
 options:
   logging: CLOUD_LOGGING_ONLY
