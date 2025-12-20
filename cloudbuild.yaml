@@ -45,19 +45,33 @@ steps:
     - '--add-cloudsql-instances=$PROJECT_ID:asia-southeast1:expenses-db'
     - '--env-vars-file=env_secrets.env'
     - '--allow-unauthenticated'
-- name: 'gcr.io/cloud-builders/docker'
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
   args:
-  - 'run'
-  - '--rm'
-  - '-v'
-  - '/workspace:/workspace'
-  - '--env-file'
-  - '/workspace/env_secrets.env'
-  - 'migrate/migrate:latest'
-  - '-path=/workspace/backend/cmd/migrate/migrations'
-  - '-database'
-  - 'postgres://${DB_USER}:${DB_PASSWORD}@/${DB_NAME}?host=/cloudsql/${INSTANCE_CONNECTION_NAME}&sslmode=disable'
-  - 'up'
+    - '-c'
+    - |
+      # Fetch secrets
+      DB_USER=$$(gcloud secrets versions access latest --secret=db-user)
+      DB_PASSWORD=$$(gcloud secrets versions access latest --secret=db-password)
+      DB_NAME=$$(gcloud secrets versions access latest --secret=db-name)
+      
+      # Construct FULL database URL (no substitutions)
+      DB_URL="postgres://${DB_USER}:${DB_PASSWORD}@/${DB_NAME}?host=/cloudsql/${_INSTANCE_CONNECTION_NAME}&sslmode=disable"
+      
+      # Start proxy
+      /cloud-sql-proxy $$_INSTANCE_CONNECTION_NAME &
+      PROXY_PID=$$!
+      sleep 10
+      
+      # Run migrate (full URL passed as arg)
+      docker run --rm -v /workspace:/workspace \
+        --env INSTANCE_CONNECTION_NAME=$$_INSTANCE_CONNECTION_NAME \
+        migrate/migrate:latest \
+        -path=/workspace/backend/cmd/migrate/migrations \
+        -database "$$DB_URL" \
+        up
+      
+      kill $$PROXY_PID
 
 options:
   logging: CLOUD_LOGGING_ONLY
