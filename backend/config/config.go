@@ -14,7 +14,7 @@ type DBConfig struct {
 	MaxIdleConns           int    `env:"DB_MAX_IDLE_CONNS" envDefault:"25"`
 	MaxIdleTime            string `env:"DB_MAX_IDLE_TIME"  envDefault:"15m"`
 	User                   string `env:"DB_USER"`
-	Password               string `env:"DB_PASS"`
+	Password               string `env:"DB_PASSWORD"`
 	Name                   string `env:"DB_NAME"`
 	InstanceConnectionName string `env:"INSTANCE_CONNECTION_NAME"`
 }
