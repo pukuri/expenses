@@ -55,16 +55,15 @@ steps:
     - 'gcr.io/cloudsql-connectors/cloud-sql-proxy'
     - ${_CLOUD_SQL_INSTANCE}
     - '--port=5432'
-    - '--address=127.0.0.1' # Listen only on the local interface (required for the next step)
-
-  # Step 2: Wait for the proxy to start (prevents connection errors)
+    - '--address=0.0.0.0' # Listen only on the local interface (required for the next step)
 - id: 'Wait for Proxy'
   name: 'bash'
-  args: ['sleep', '5']
-
-  # Step 3: Run the database migration command.
-  # We use the 'golang:latest' builder image, but you might need a custom image
-  # that includes the 'migrate' binary if you compiled it yourself.
+  args: ['sleep', '15']
+- id: 'Check Proxy Logs'
+  name: 'gcr.io/cloud-builders/docker'
+  # 💡 Display the logs of the detached proxy container
+  args: ['logs', 'cloudsql-proxy']
+  waitFor: ['Start Cloud SQL Proxy']
 - id: 'Run Database Migrations'
   name: 'golang:latest' # Replace with a builder image containing 'migrate'
   entrypoint: 'sh'
@@ -76,8 +75,6 @@ steps:
       
       # Execute the migration command, connecting to the proxy at 127.0.0.1
       /root/go/bin/migrate -path file://backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@127.0.0.1:5432/${_DB_NAME}?sslmode=disable" up
-
-  # Step 4: Stop and clean up the Cloud SQL Proxy container (Optional but recommended)
 - id: 'Stop Cloud SQL Proxy'
   name: 'gcr.io/cloud-builders/docker'
   args:
