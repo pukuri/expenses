@@ -26,6 +26,13 @@ steps:
     echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret=db-password)" >> env_secrets.env
     echo "DB_NAME=$(gcloud secrets versions access latest --secret=db-name)" >> env_secrets.env
     echo "INSTANCE_CONNECTION_NAME=$(gcloud secrets versions access latest --secret=instance-connection-name)" >> env_secrets.env
+    echo "ALLOWED_GOOGLE_ID=$(gcloud secrets versions access latest --secret=allowed-google-id)" >> env_secrets.env
+    echo "FRONTEND_URL=$(gcloud secrets versions access latest --secret=frontend-url)" >> env_secrets.env
+    echo "GOOGLE_REDIRECT_URI=$(gcloud secrets versions access latest --secret=google-redirect-uri)" >> env_secrets.env
+    echo "GOAUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=goauth-client-id)" >> env_secrets.env
+    echo "GOAUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=goauth-client-secret)" >> env_secrets.env
+    echo "GOAUTH_PROJECT_ID=$(gcloud secrets versions access latest --secret=goauth-project-id)" >> env_secrets.env
+    echo "JWT_SECRET=$(gcloud secrets versions access latest --secret=jwt-secret)" >> env_secrets.env
     echo "ENV=production" >> env_secrets.env
 - name: 'gcr.io/cloud-builders/gcloud'
   args: 
@@ -38,6 +45,26 @@ steps:
     - '--add-cloudsql-instances=$PROJECT_ID:asia-southeast1:expenses-db'
     - '--env-vars-file=env_secrets.env'
     - '--allow-unauthenticated'
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    # Fetch same secrets used by backend
+    DB_USER=$(gcloud secrets versions access latest --secret=db-user)
+    DB_PASSWORD=$(gcloud secrets versions access latest --secret=db-password)
+    DB_NAME=$(gcloud secrets versions access latest --secret=db-name)
+    INSTANCE_CONNECTION_NAME=$(gcloud secrets versions access latest --secret=instance-connection-name)
+    
+    # Run migrations via cloud-sql-proxy
+    /cloud-sql-proxy $INSTANCE_CONNECTION_NAME &
+    PROXY_PID=$!
+    
+    # Wait for proxy + run migrate
+    sleep 5
+    migrate -path=/workspace/migrations -database "postgres://$DB_USER:$DB_PASSWORD@/cloudsql/$INSTANCE_CONNECTION_NAME/$DB_NAME?sslmode=disable" -verbose up
+    
+    kill $PROXY_PID
 
 substitutions:
   _BUCKET: 'expenses.fachriakbarr.com'

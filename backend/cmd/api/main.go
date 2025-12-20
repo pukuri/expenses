@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -22,13 +21,7 @@ func main() {
 
 	db, err := db.New(cfg)
 	if err != nil {
-		fmt.Printf("DB_USER='%s'\n", cfg.DB.User)
-		fmt.Printf("DB_PASSWORD='%s'\n", cfg.DB.Password)
-		fmt.Printf("DB_NAME='%s'\n", cfg.DB.Name)
-		fmt.Printf("INSTANCE_CONNECTION_NAME='%s'\n", cfg.DB.InstanceConnectionName)
-
-		fmt.Printf("SQL.OPEN ERROR: %v\n", err)
-		return
+		log.Panic(err)
 	}
 	defer db.Close()
 	log.Println("database connection pool established")
@@ -36,7 +29,7 @@ func main() {
 	oauthConfig := &oauth2.Config{
 		ClientID:     cfg.Google.ClientID,
 		ClientSecret: cfg.Google.ClientSecret,
-		RedirectURL:  cfg.Google.RedirectUri,
+		RedirectURL:  cfg.Google.RedirectUri + "/api/auth/google/callback",
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 			"https://www.googleapis.com/auth/userinfo.profile",
