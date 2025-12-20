@@ -52,9 +52,9 @@ steps:
   - '-v'
   - '/workspace:/migrations'
   - 'migrate/migrate:latest'
-  - '-path=/migrations'
+  - '-path=/migrations/cmd/migrate/migrations'
   - '-database'
-  - 'postgres://$$DB_USER:$$DB_PASSWORD@/$$DB_NAME?host=/cloudsql/$$_INSTANCE_CONNECTION_NAME&sslmode=disable'
+  - 'postgres://$$DB_USER:$$DB_PASSWORD@/$$DB_NAME?host=/cloudsql/$$INSTANCE_CONNECTION_NAME&sslmode=disable'
   - 'up'
 
 options:
