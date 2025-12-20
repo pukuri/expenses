@@ -24,7 +24,7 @@ func main() {
 		log.Printf("INSTANCE_CONNECTION_NAME='%s'\n", cfg.DB.InstanceConnectionName)
 
 		log.Printf("SQL.OPEN ERROR: %v\n", err)
-		log.Fatal(err)
+		return
 	}
 
 	defer conn.Close()
