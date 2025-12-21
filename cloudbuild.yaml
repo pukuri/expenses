@@ -45,7 +45,7 @@ steps:
   args:
     - '-c'
     - |
-      go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+      go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       
       migrate -path backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
 # - id: 'Stop Cloud SQL Proxy'
