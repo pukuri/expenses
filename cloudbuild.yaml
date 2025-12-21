@@ -19,41 +19,41 @@ steps:
   dir: 'backend'
 
 # Migration steps
-- id: 'Start Cloud SQL Proxy'
-  name: 'gcr.io/cloud-builders/docker'
-  args:
-    - 'run'
-    - '-d'
-    - '--network=cloudbuild'
-    - '--name=cloudsql-proxy'
-    - 'gcr.io/cloudsql-connectors/cloud-sql-proxy'
-    - ${_INSTANCE_CONNECTION_NAME}
-    - '--port=5432'
-    - '--address=0.0.0.0'
-- id: 'Check Proxy Health & Wait'
-  name: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Waiting 10 seconds for proxy to initialize..."
-      sleep 10
-      echo "Displaying proxy logs (check for 'permission denied' or 'instance not found'):"
-      docker logs cloudsql-proxy || true
-- id: 'Run Database Migrations'
-  name: 'golang:latest'
-  entrypoint: 'sh'
-  args:
-    - '-c'
-    - |
-      go install github.com/golang-migrate/migrate/cmd/migrate@latest
+# - id: 'Start Cloud SQL Proxy'
+#   name: 'gcr.io/cloud-builders/docker'
+#   args:
+#     - 'run'
+#     - '-d'
+#     - '--network=cloudbuild'
+#     - '--name=cloudsql-proxy'
+#     - 'gcr.io/cloudsql-connectors/cloud-sql-proxy'
+#     - ${_INSTANCE_CONNECTION_NAME}
+#     - '--port=5432'
+#     - '--address=0.0.0.0'
+# - id: 'Check Proxy Health & Wait'
+#   name: 'bash'
+#   args:
+#     - '-c'
+#     - |
+#       echo "Waiting 10 seconds for proxy to initialize..."
+#       sleep 10
+#       echo "Displaying proxy logs (check for 'permission denied' or 'instance not found'):"
+#       docker logs cloudsql-proxy || true
+# - id: 'Run Database Migrations'
+#   name: 'golang:latest'
+#   entrypoint: 'sh'
+#   args:
+#     - '-c'
+#     - |
+#       go install github.com/golang-migrate/migrate/cmd/migrate@latest
       
-      /root/go/bin/migrate -path file://backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
-- id: 'Stop Cloud SQL Proxy'
-  name: 'gcr.io/cloud-builders/docker'
-  args:
-    - 'stop'
-    - 'cloudsql-proxy'
-  waitFor: ['-']
+#       /root/go/bin/migrate -path file://backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
+# - id: 'Stop Cloud SQL Proxy'
+#   name: 'gcr.io/cloud-builders/docker'
+#   args:
+#     - 'stop'
+#     - 'cloudsql-proxy'
+#   waitFor: ['-']
 
 # Cloud run deployment steps
 - name: 'gcr.io/cloud-builders/gcloud'
