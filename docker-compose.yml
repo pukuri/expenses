@@ -64,3 +64,4 @@ services:
       - db
 volumes:
   postgres_data: {}
+  node_modules:
