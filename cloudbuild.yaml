@@ -45,9 +45,9 @@ steps:
   args:
     - '-c'
     - |
-      go install github.com/golang-migrate/migrate/cmd/migrate@latest
+      go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       
-      /root/go/bin/migrate -path file://backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
+      migrate -path file://backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
 # - id: 'Stop Cloud SQL Proxy'
 #   name: 'gcr.io/cloud-builders/docker'
 #   args:
