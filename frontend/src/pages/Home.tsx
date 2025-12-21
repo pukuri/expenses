@@ -1,9 +1,11 @@
+import { Button } from "@/components/ui/button";
+
 function Home() {
   return (
     <div className="flex justify-center items-center bg-background h-screen">
       <div className='text-white text-center'>
         <a href="/api/auth/google?state=/dashboard">
-            <span className="border border-gray-600 rounded-2xl p-5">Login with Google</span>
+          <Button>Login with Google</Button>
         </a>
       </div>
     </div>
