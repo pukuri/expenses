@@ -48,12 +48,12 @@ steps:
       go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       
       migrate -path backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
-# - id: 'Stop Cloud SQL Proxy'
-#   name: 'gcr.io/cloud-builders/docker'
-#   args:
-#     - 'stop'
-#     - 'cloudsql-proxy'
-#   waitFor: ['-']
+- id: 'Stop Cloud SQL Proxy'
+  name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'stop'
+    - 'cloudsql-proxy'
+  waitFor: ['-']
 
 # Cloud run deployment steps
 - name: 'gcr.io/cloud-builders/gcloud'
