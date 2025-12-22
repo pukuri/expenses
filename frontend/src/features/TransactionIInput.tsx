@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import AmountFormatter from "@/utils/AmountFormatter";
 
 interface Category { 
   id: number | undefined; 
   name: string; 
+  color: string;
 }
 interface Transaction { 
   amount: number; 
@@ -21,7 +23,7 @@ export default function TransactionInput({ fetchTransactions }: { fetchTransacti
   const [formData, setFormData] = useState<Transaction>({ amount: 0, description: '', category_id: 0, date: '' });
   const [loading, setLoading] = useState<boolean>(false);
   const [inputReady, setInputReady] = useState<boolean>(false);
-  const [categories, setCategories] = useState<Category[]>([ {id: 0, name: 'Uncategorized'} ]);
+  const [categories, setCategories] = useState<Category[]>([ {id: 0, name: 'Uncategorized', color: ''} ]);
   const [date, setDate] = useState<Date | undefined>(undefined)
   
   const fetchCategories = async(): Promise<void> => {
@@ -126,7 +128,9 @@ export default function TransactionInput({ fetchTransactions }: { fetchTransacti
                 <SelectContent>
                   <SelectGroup>
                     {categories.map((cat) => (
-                      <SelectItem key={JSON.stringify(cat.id) || '0'} value={JSON.stringify(cat.id)}>{cat.name}</SelectItem>
+                      <SelectItem key={JSON.stringify(cat.id) || '0'} value={JSON.stringify(cat.id)}>
+                        {cat.name} <span style={{ color: cat?.color }}>•</span>
+                      </SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>

@@ -36,24 +36,22 @@ export default function MainTable({ data }: { data: TransactionsResponse }) {
         <TableBody>
           {data.data.map((datum: Transaction) => (
             <TableRow key={datum.id} className="text-foreground">
-              <TableCell className="p-4">{DateConverter(datum.date)}</TableCell>
-              <TableCell className="p-4">{AmountFormatter(datum.amount)}</TableCell>
-              <TableCell className="p-4">{AmountFormatter(datum.running_balance)}</TableCell>
-              <TableCell className="p-4">
+              <TableCell className="px-4">{DateConverter(datum.date)}</TableCell>
+              <TableCell className="px-2">{AmountFormatter(datum.amount)}</TableCell>
+              <TableCell className="px-2">{AmountFormatter(datum.running_balance)}</TableCell>
+              <TableCell className="px-2">
+                {datum.description}
                 {datum.category_name.String != '' && 
                   <span
+                    className="text-xs p-1 text-white ml-4"
                     style={{
                       border: `1px solid ${datum.category_color.String}`,
-                      padding: '4px 6px',
                       borderRadius: '4px',
-                      color: 'white',
-                      marginRight: '10px'
                     }}
                   >
                     {datum.category_name.String} 
                   </span>
                 }
-                {datum.description}
               </TableCell>
             </TableRow>
           ))}
