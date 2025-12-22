@@ -41,7 +41,7 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"
   },
-  "optionalDependencies":  {
+  "optionalDependencies": {
     "@rollup/rollup-linux-arm64-gnu": "^4.0.0",
     "@rollup/rollup-linux-x64-musl": "^4.9.5"
   }

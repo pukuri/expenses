@@ -5,8 +5,6 @@ import TransactionInput from '../features/TransactionIInput'
 import CurrentBalance from '../features/CurrentBalance';
 import CurrentMonthExpenses from '../features/CurrentMonthExpenses';
 import { useAuth } from '../contexts/AuthContext';
-import LastDateBalance from '../features/LastDateBalance';
-import LastMonthExpenses from '../features/LastMonthExpenses';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 
@@ -65,16 +63,18 @@ function Dashboard() {
     fetchTransactions().catch(console.error)
   }, []);
   
-  const cardStyle = 'rounded-md border-1 border-secondary'
+  const cardStyle = 'rounded-md border-1 border-secondary w-1/4'
 
   return (
     <div className='h-full'>
       <div className="pb-10 bg-background">
         <div className='flex flex-col'>
           <div className='flex p-5 justify-between'>
-            <h1 className='text-xl text-foreground'>Welcome, {user?.name}</h1>
+            <div className='flex flex-row'>
+              <img src={user?.picture} className='rounded-full' alt="profile picture" referrerPolicy="no-referrer" width={36}/>
+              <h1 className='text-xl text-foreground ml-4 pt-1'>Welcome, {user?.name}</h1>
+            </div>
             <Button size="sm" onClick={handleLogout}><LogOut /> Logout</Button>
-            {/* <button className='text-white text-left ml-5 mt-5' onClick={handleLogout}>Logout</button> */}
           </div>
           <div className='mx-5 flex flex-row gap-5'>
             <div className={cardStyle}>
@@ -82,12 +82,6 @@ function Dashboard() {
             </div>
             <div className={cardStyle}>
               <CurrentMonthExpenses /> 
-            </div>
-            <div className={cardStyle}>
-              <LastDateBalance /> 
-            </div>
-            <div className={cardStyle}>
-              <LastMonthExpenses /> 
             </div>
           </div>
           <div className={`h-180 overflow-scroll w-2/3 mx-5 mt-5 ${cardStyle}`}>
