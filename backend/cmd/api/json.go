@@ -33,6 +33,11 @@ func (ni *NullableInt64) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
+	if i == 0 {
+		ni.Valid = false
+		return nil
+	}
+
 	ni.Int64 = i
 	ni.Valid = true
 	return nil

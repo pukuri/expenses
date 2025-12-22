@@ -295,7 +295,15 @@ func (s *TransactionStore) Update(ctx context.Context, transaction *Transaction)
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
-	_, err := s.db.ExecContext(ctx, query, transaction.Amount, transaction.RunningBalance, transaction.Description, transaction.CategoryID, transaction.ID)
+	_, err := s.db.ExecContext(
+		ctx,
+		query,
+		transaction.Amount,
+		transaction.RunningBalance,
+		transaction.Description,
+		transaction.CategoryID,
+		transaction.ID,
+	)
 	if err != nil {
 		return err
 	}

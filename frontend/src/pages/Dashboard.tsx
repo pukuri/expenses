@@ -89,7 +89,7 @@ function Dashboard() {
             </div>
           </div>
           <div className={`h-180 overflow-scroll w-2/3 mx-5 mt-5 ${cardStyle}`}>
-            <MainTable data={data} />
+            <MainTable data={data} fetchTransactions={fetchTransactions} />
           </div>
           <div className={`w-2/3 mx-5 mt-5 ${cardStyle}`}>
             <TransactionInput fetchTransactions={fetchTransactions} />

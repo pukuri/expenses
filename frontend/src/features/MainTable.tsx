@@ -1,6 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AmountFormatter from "../utils/AmountFormatter"
 import DateConverter from "../utils/DateConverter"
+import { MoreVerticalIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 interface NullString {
   String: string;
@@ -20,8 +24,51 @@ interface Transaction {
 interface TransactionsResponse {
   data: Transaction[];
 }
+interface Category { 
+  id: number; 
+  name: string; 
+  color: string;
+}
 
-export default function MainTable({ data }: { data: TransactionsResponse }) {
+export default function MainTable({ data, fetchTransactions }: { data: TransactionsResponse, fetchTransactions: () => void }) {
+  const [categories, setCategories] = useState<Category[]>([ {id: 0, name: 'Uncategorized', color: ''} ]);
+
+  const fetchCategories = async(): Promise<void> => {
+    const response = await fetch("/api/v1/categories")
+    try {
+      if(!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const result = await response.json()
+      setCategories([...categories, ...result.data])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  
+  const updateCategory = async(id: number, category_id: number): Promise<void> => {
+    const formData = { "category_id": category_id }
+    try {
+      const response = await fetch(`/api/v1/transactions/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+      const result = await response.json()
+      console.log('Success:', result);
+      fetchTransactions()
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories().catch(console.error)
+  }, [])
+
   return (
     <div>
       <Table className="static">
@@ -31,6 +78,7 @@ export default function MainTable({ data }: { data: TransactionsResponse }) {
             <TableHead className="text-foreground">Amount</TableHead>
             <TableHead className="text-foreground">Balance</TableHead>
             <TableHead className="text-foreground">Description</TableHead>
+            <TableHead className="text-foreground"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -52,6 +100,27 @@ export default function MainTable({ data }: { data: TransactionsResponse }) {
                     {datum.category_name.String} 
                   </span>
                 }
+              </TableCell>
+              <TableCell className="px-2">
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" aria-label="Open menu" size="sm">
+                      <MoreVerticalIcon />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="" align="end">
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>Update Category</DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          { categories.map((category) => (
+                            <DropdownMenuItem key={category.id} onSelect={() => updateCategory(datum.id, category.id)}>{category.name}</DropdownMenuItem>
+                          ))}
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}

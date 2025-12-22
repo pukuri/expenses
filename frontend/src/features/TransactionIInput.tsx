@@ -43,7 +43,7 @@ export default function TransactionInput({ fetchTransactions }: { fetchTransacti
     fetchCategories().catch(console.error)
   }, [])
   
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent): Promise<void> => {
     try {
       e.preventDefault()
       setLoading(true)
