@@ -7,6 +7,7 @@ import CurrentMonthExpenses from '../features/CurrentMonthExpenses';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
+import ExpensesByMonthCategory from '@/features/ExpensesByMonthCategory';
 
 interface NullString {
   String: string;
@@ -82,6 +83,9 @@ function Dashboard() {
             </div>
             <div className={cardStyle}>
               <CurrentMonthExpenses /> 
+            </div>
+            <div className={cardStyle}>
+              <ExpensesByMonthCategory /> 
             </div>
           </div>
           <div className={`h-180 overflow-scroll w-2/3 mx-5 mt-5 ${cardStyle}`}>

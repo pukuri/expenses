@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import AmountFormatter from "@/utils/AmountFormatter";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Category { 
   id: number | undefined; 
@@ -126,13 +125,11 @@ export default function TransactionInput({ fetchTransactions }: { fetchTransacti
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectGroup>
-                    {categories.map((cat) => (
-                      <SelectItem key={JSON.stringify(cat.id) || '0'} value={JSON.stringify(cat.id)}>
-                        {cat.name} <span style={{ color: cat?.color }}>•</span>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
+                  {categories.map((cat) => (
+                    <SelectItem key={JSON.stringify(cat.id) || '0'} value={JSON.stringify(cat.id)}>
+                      {cat.name} <span style={{ color: cat?.color }}>•</span>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

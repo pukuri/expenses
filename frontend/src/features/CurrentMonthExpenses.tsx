@@ -1,8 +1,9 @@
 import { useEffect, useState, type SetStateAction } from "react";
 import AmountFormatter from "../utils/AmountFormatter";
 import { Badge } from "@/components/ui/badge";
-import { EqualApproximately, TrendingDown, TrendingUp } from "lucide-react";
-import { calculateBalancePercentage } from "@/utils/CalculatePercentage";
+import PercentageBadge from "@/components/percentageBadge";
+import TodayDate from "@/utils/TodayDate";
+import LastDate from "@/utils/LastDate";
 
 export default function CurrentMonthExpenses() {
   const [currentAmount, setCurrentAmount] = useState<number>(0)
@@ -24,23 +25,12 @@ export default function CurrentMonthExpenses() {
   }
   
   const fetchCurrentAmount = async (): Promise<void> => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = (now.getMonth() + 1).toString().padStart(2, '0')
-    const day = now.getDate().toString().padStart(2, '0')
-    const dateParams = `${year}-${month}-${day}`
-
+    const dateParams = TodayDate()
     fetchAmount(dateParams, setCurrentAmount)
   }
   
   const fetchLastAmount = async(): Promise<void> => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const lastMonth = now.getMonth() == 0 ? 11 : now.getMonth() - 1 
-    const month = (lastMonth + 1).toString().padStart(2, '0')
-    const day = now.getDate().toString().padStart(2, '0')
-    const dateParams = `${year}-${month}-${day}`
-
+    const dateParams = LastDate()
     fetchAmount(dateParams, setLastAmount)
   }
   
@@ -48,16 +38,6 @@ export default function CurrentMonthExpenses() {
     fetchCurrentAmount().catch(console.error)
     fetchLastAmount().catch(console.error)
   }, []);
-
-  const renderBadgeContent = () => {
-    if (currentAmount > lastAmount) {
-      return <><TrendingUp size="16" />&nbsp;{calculateBalancePercentage(lastAmount, currentAmount)}%</>;
-    } else if (currentAmount < lastAmount) {
-      return <><TrendingDown size="16"/>&nbsp;{calculateBalancePercentage(lastAmount, currentAmount)}%</>;
-    } else {
-      return <><EqualApproximately size="16"/>&nbsp;{calculateBalancePercentage(lastAmount, currentAmount)}%</>;
-    }
-  }
 
   const renderBadgeSub = () => {
     if (currentAmount > lastAmount) {
@@ -77,11 +57,11 @@ export default function CurrentMonthExpenses() {
           variant="secondary"
           className="bg-primary text-white font-medium text-xs"
         > 
-          {renderBadgeContent()}
+          <PercentageBadge current={currentAmount} last={lastAmount} />
         </Badge>
       </div>
       {renderBadgeSub()}
-      <h1 className="text-4xl font-bold">{AmountFormatter(currentAmount)}</h1>
+      <h1 className="text-4xl font-bold mt-2">{AmountFormatter(currentAmount)}</h1>
     </div>
   )
 }

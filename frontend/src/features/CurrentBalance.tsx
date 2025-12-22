@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import AmountFormatter from "../utils/AmountFormatter";
 import { Badge } from "@/components/ui/badge";
-import { EqualApproximately, TrendingDown, TrendingUp } from "lucide-react";
-import { calculateBalancePercentage } from "@/utils/CalculatePercentage";
+import PercentageBadge from "@/components/percentageBadge";
+import LastDate from "@/utils/LastDate";
 
 interface NullString {
   String: string;
@@ -27,12 +27,7 @@ export default function CurrentBalance(data: { data: TransactionsResponse }) {
   const [lastBalance, setLastBalance] = useState<number>(0)
   const currentBalance = data.data.data[0]?.running_balance
   
-  const now = new Date()
-  const year = now.getFullYear()
-  const lastMonth = now.getMonth() == 0 ? 11 : now.getMonth() - 1 
-  const month = (lastMonth + 1).toString().padStart(2, '0')
-  const day = now.getDate().toString().padStart(2, '0')
-  const dateParams = `${year}-${month}-${day}`
+  const dateParams = LastDate()
   const fetchLastDateBalance = async (): Promise<void> => {
     try {
       const response = await fetch("/api/v1/balance_by_date?" + new URLSearchParams({
@@ -51,16 +46,7 @@ export default function CurrentBalance(data: { data: TransactionsResponse }) {
   useEffect(() => {
     fetchLastDateBalance().catch(console.error)
   }, [])
-  
-  const renderBadgeContent = () => {
-    if (currentBalance > lastBalance) {
-      return <><TrendingUp size="16" />&nbsp;{calculateBalancePercentage(lastBalance, currentBalance)}%</>;
-    } else if (currentBalance < lastBalance) {
-      return <><TrendingDown size="16"/>&nbsp;{calculateBalancePercentage(lastBalance, currentBalance)}%</>;
-    } else {
-      return <><EqualApproximately size="16"/>&nbsp;{calculateBalancePercentage(lastBalance, currentBalance)}%</>;
-    }
-  }
+
   const renderBadgeSub = () => {
     if (currentBalance > lastBalance) {
       return <p className="text-xs text-chart-1">Your current balance this date is higher than last month</p>
@@ -79,11 +65,11 @@ export default function CurrentBalance(data: { data: TransactionsResponse }) {
           variant="secondary"
           className="bg-primary text-white font-medium text-xs"
         > 
-          {renderBadgeContent()}
+          <PercentageBadge current={currentBalance} last={lastBalance} />
         </Badge>
       </div>
       {renderBadgeSub()}
-      <h1 className="text-4xl font-bold">{AmountFormatter(data.data.data[0]?.running_balance)}</h1>
+      <h1 className="text-4xl font-bold mt-2">{AmountFormatter(data.data.data[0]?.running_balance)}</h1>
     </div>
   ) 
 }

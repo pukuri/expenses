@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -88,8 +87,32 @@ func (app *application) getTransactionHandler(w http.ResponseWriter, r *http.Req
 func (app *application) getExpensesByMonthHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	date := r.URL.Query().Get("date")
-	log.Println(date)
 	amount, err := app.store.Transactions.GetExpensesByMonth(ctx, date)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	type wrapper struct {
+		Amount any `json:"amount"`
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, &wrapper{Amount: amount}); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
+
+func (app *application) getExpensesByMonthCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	date := r.URL.Query().Get("date")
+	categoryID, err := strconv.ParseInt(r.URL.Query().Get("category_id"), 10, 64)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	amount, err := app.store.Transactions.GetExpensesByMonthCategory(ctx, date, categoryID)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return

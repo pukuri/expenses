@@ -202,6 +202,34 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 	return returnValue, nil
 }
 
+func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string, categoryID int64) (int64, error) {
+	query := `
+		SELECT COALESCE(SUM(amount), 0)
+		FROM transactions
+		WHERE date >= date_trunc('month', $1::date)
+			AND date < date_trunc('month', $1::date) + INTERVAL '1 month'
+			AND category_id = $2
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	var returnValue int64
+	err := s.db.QueryRowContext(
+		ctx,
+		query,
+		date,
+		categoryID,
+	).Scan(
+		&returnValue,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return returnValue, nil
+}
+
 func (s *TransactionStore) GetBalanceByDate(ctx context.Context, date string) (int64, error) {
 	query := `
 		SELECT COALESCE(running_balance, 0)

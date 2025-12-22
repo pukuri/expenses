@@ -17,6 +17,7 @@ type Storage struct {
 		GetById(context.Context, int64) (*Transaction, error)
 		GetLast(context.Context) (*Transaction, error)
 		GetExpensesByMonth(context.Context, string) (int64, error)
+		GetExpensesByMonthCategory(context.Context, string, int64) (int64, error)
 		GetBalanceByDate(context.Context, string) (int64, error)
 		Index(context.Context) ([]TransactionGet, error)
 		Create(context.Context, *Transaction) error
