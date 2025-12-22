@@ -206,8 +206,8 @@ func (s *TransactionStore) GetBalanceByDate(ctx context.Context, date string) (i
 	query := `
 		SELECT COALESCE(running_balance, 0)
 		FROM transactions
-		WHERE date = $1::date
-		ORDER BY created_at DESC
+		WHERE date <= $1::date
+		ORDER BY date DESC
 		LIMIT 1
 	`
 

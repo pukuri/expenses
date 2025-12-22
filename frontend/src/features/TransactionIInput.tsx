@@ -85,11 +85,16 @@ export default function TransactionInput({ fetchTransactions }: { fetchTransacti
                     selected={date}
                     captionLayout="dropdown"
                     onSelect={(date) => {
-                      const fDate = date?.toISOString().split('T')[0]
-                      if(fDate) {
-                        setFormData({ ...formData, date: fDate })
-                      } 
-                      setDate(date)
+                      if (date) {
+                        const offset = date?.getTimezoneOffset()
+                        const timzoneDate = new Date(date.getTime() - (offset*60*1000))
+                        const fDate = timzoneDate.toISOString().split('T')[0]
+                        console.log(fDate)
+                        if(fDate) {
+                          setFormData({ ...formData, date: fDate })
+                        } 
+                        setDate(date)
+                      }
                     }}
                     className="w-52"
                   />
