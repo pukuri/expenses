@@ -22,3 +22,8 @@ export interface Transaction {
 export interface TransactionsResponse {
   data: Transaction[];
 }
+
+export interface User {
+  name: string;
+  picture: string;
+}
