@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import { AuthProvider, ProtectedRoute } from './contexts/AuthContext';
+import Sample from './pages/Sample';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
               <Dashboard />
             </ProtectedRoute>
             } />
+          <Route path="/sample" element={<Sample />} />
         </Routes>
       </Router>
     </AuthProvider>

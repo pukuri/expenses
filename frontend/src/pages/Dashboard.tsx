@@ -8,28 +8,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import ExpensesByMonthCategory from '@/features/ExpensesByMonthCategory';
-
-interface NullString {
-  String: string;
-  Valid: boolean;
-}
-
-interface Transaction {
-  id: number;
-  date: string;
-  amount: number;
-  running_balance: number;
-  description: string;
-  category_name: NullString;
-  category_color: NullString;
-}
-
-interface TransactionsResponse {
-  data: Transaction[];
-}
+import type { Category, TransactionsResponse } from '@/types';
 
 function Dashboard() {
   const [data, setData] = useState<TransactionsResponse>({ data: [] })
+  const [categories, setCategories] = useState<Category[]>([ {id: 0, name: 'Uncategorized', color: ''} ])
   const { user } = useAuth()
   
   const fetchTransactions = async (): Promise<void> => {
@@ -44,6 +27,20 @@ function Dashboard() {
       console.error(err)
     }
   }
+
+  const fetchCategories = async (): Promise<void> => {
+    const response = await fetch("/api/v1/categories")
+    try {
+      if(!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const result = await response.json()
+      setCategories(result.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  
   
   const handleLogout = async (): Promise<void> => {
     try {
@@ -62,6 +59,7 @@ function Dashboard() {
   
   useEffect(() => {
     fetchTransactions().catch(console.error)
+    fetchCategories().catch(console.error)
   }, []);
   
   const cardStyle = 'rounded-md border-1 border-secondary w-1/4'
@@ -85,14 +83,14 @@ function Dashboard() {
               <CurrentMonthExpenses /> 
             </div>
             <div className={cardStyle}>
-              <ExpensesByMonthCategory /> 
+              <ExpensesByMonthCategory categories={categories} /> 
             </div>
           </div>
           <div className={`h-180 overflow-scroll w-2/3 mx-5 mt-5 ${cardStyle}`}>
-            <MainTable data={data} fetchTransactions={fetchTransactions} />
+            <MainTable data={data} categories={categories} fetchTransactions={fetchTransactions} />
           </div>
           <div className={`w-2/3 mx-5 mt-5 ${cardStyle}`}>
-            <TransactionInput fetchTransactions={fetchTransactions} />
+            <TransactionInput categories={categories} isSample={false} fetchTransactions={fetchTransactions} />
           </div>
         </div>
       </div>

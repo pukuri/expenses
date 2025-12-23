@@ -3,25 +3,7 @@ import AmountFormatter from "../utils/AmountFormatter";
 import { Badge } from "@/components/ui/badge";
 import PercentageBadge from "@/components/percentageBadge";
 import LastDate from "@/utils/LastDate";
-
-interface NullString {
-  String: string;
-  Valid: boolean;
-}
-
-interface Transaction {
-  id: number;
-  date: string;
-  amount: number;
-  running_balance: number;
-  description: string;
-  category_name: NullString;
-  category_color: NullString;
-}
-
-interface TransactionsResponse {
-  data: Transaction[];
-}
+import type { TransactionsResponse } from "@/types";
 
 export default function CurrentBalance(data: { data: TransactionsResponse }) {
   const [lastBalance, setLastBalance] = useState<number>(0)

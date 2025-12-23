@@ -4,48 +4,15 @@ import DateConverter from "../utils/DateConverter"
 import { MoreVerticalIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import type { Category, Transaction, TransactionsResponse } from "@/types";
 
-interface NullString {
-  String: string;
-  Valid: boolean;
+interface MainTableProps {
+  data: TransactionsResponse;
+  categories: Category[];
+  fetchTransactions: () => void;
 }
 
-interface Transaction {
-  id: number;
-  date: string;
-  amount: number;
-  running_balance: number;
-  description: string;
-  category_name: NullString;
-  category_color: NullString;
-}
-
-interface TransactionsResponse {
-  data: Transaction[];
-}
-interface Category { 
-  id: number; 
-  name: string; 
-  color: string;
-}
-
-export default function MainTable({ data, fetchTransactions }: { data: TransactionsResponse, fetchTransactions: () => void }) {
-  const [categories, setCategories] = useState<Category[]>([ {id: 0, name: 'Uncategorized', color: ''} ]);
-
-  const fetchCategories = async(): Promise<void> => {
-    const response = await fetch("/api/v1/categories")
-    try {
-      if(!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const result = await response.json()
-      setCategories([...categories, ...result.data])
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  
+export default function MainTable({ data, categories, fetchTransactions }: MainTableProps) {
   const updateCategory = async(id: number, category_id: number): Promise<void> => {
     const formData = { "category_id": category_id }
     try {
@@ -64,10 +31,6 @@ export default function MainTable({ data, fetchTransactions }: { data: Transacti
       console.error(err)
     }
   }
-
-  useEffect(() => {
-    fetchCategories().catch(console.error)
-  }, [])
 
   return (
     <div>

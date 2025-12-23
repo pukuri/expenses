@@ -5,29 +5,11 @@ import PercentageBadge from "@/components/percentageBadge";
 import TodayDate from "@/utils/TodayDate";
 import LastDate from "@/utils/LastDate";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { Category } from "@/types";
 
-interface Category { 
-  id: number | undefined; 
-  name: string; 
-}
-
-export default function ExpensesByMonthCategory() {
+export default function ExpensesByMonthCategory({ categories }: { categories: Category[] } ) {
   const [currentAmount, setCurrentAmount] = useState<number>(0)
   const [lastAmount, setLastAmount] = useState<number>(0)
-  const [categoryNames, setCategoryNames] = useState<Category[]>([ {id: 0, name: 'Uncategorized'} ])
-  
-  const fetchCategories = async (): Promise<void> => {
-    const response = await fetch("/api/v1/categories")
-    try {
-      if(!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      const result = await response.json()
-      setCategoryNames(result.data)
-    } catch (err) {
-      console.error(err)
-    }
-  }
   
   const handleCategoryChange = async (value: string): Promise<void> => {
     await fetchCurrentAmount(parseInt(value)).catch(console.error)
@@ -61,10 +43,9 @@ export default function ExpensesByMonthCategory() {
   }
   
   useEffect(() => {
-    fetchCategories()
-    if (categoryNames[0].id) {
-      fetchCurrentAmount(categoryNames[0].id).catch(console.error)
-      fetchLastAmount(categoryNames[0].id).catch(console.error)
+    if (categories[0].id) {
+      fetchCurrentAmount(categories[0].id).catch(console.error)
+      fetchLastAmount(categories[0].id).catch(console.error)
     }
   }, []);
 
@@ -97,7 +78,7 @@ export default function ExpensesByMonthCategory() {
             <SelectValue placeholder="Categories" />
           </SelectTrigger>
           <SelectContent>
-            { categoryNames.map((category, index) => (
+            { categories.map((category, index) => (
               <SelectItem key={index} value={JSON.stringify(category.id)}>{category.name}</SelectItem>
             )) }
           </SelectContent>
