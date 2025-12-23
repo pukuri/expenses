@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useState } from "react"
 import { Navigate } from "react-router-dom";
 
 interface User {
@@ -46,27 +46,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
   
-  useEffect(() => {
-    fetchUser()
-  }, [])
-  
   return (
     <AuthContext.Provider value={{ user, loading, fetchUser }}>
       {children}
     </AuthContext.Provider>
   )
-}
-
-export function ProtectedRoute({children}: { children: React.ReactNode}) {
-  const { user, loading } = useAuth()
-  
-  if(loading) {
-    return <div>Loading...</div>
-  }
-  
-  if (!user) {
-    return <Navigate to="/" replace />
-  }
-  
-  return <>{children}</>
 }

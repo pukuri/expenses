@@ -15,7 +15,7 @@ function Sample() {
       currentAmount={14000000}
       lastAmount={8000000}
       currentBalance={data.data[0].running_balance}
-      lastBalance={10000000}
+      lastBalance={13275000}
       fetchTransactions={() => {}}
     />
   );

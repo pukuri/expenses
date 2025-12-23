@@ -1,11 +1,13 @@
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { useCurrentMonthExpenses } from '@/hooks/useCurrentMonthExpenses';
 import { useLastBalance } from '@/hooks/useLastBalance';
 import { MainLayout } from '@/features/MainLayout';
+import { Navigate } from 'react-router-dom';
 
-function Dashboard() {
+function DashboardContent() {
   const { user } = useAuth();
   const { data, fetchTransactions } = useTransactions();
   const { categories } = useCategories();
@@ -27,6 +29,30 @@ function Dashboard() {
       fetchTransactions={fetchTransactions}
     />
   );
+}
+
+function Dashboard() {
+  const { user, fetchUser } = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  const checkUser = async () => {
+    await fetchUser();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <DashboardContent />;
 }
 
 export default Dashboard;
