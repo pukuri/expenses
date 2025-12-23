@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react"
-import { Navigate } from "react-router-dom";
 
 interface User {
   id: number;
