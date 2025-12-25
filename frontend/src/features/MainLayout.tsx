@@ -2,11 +2,11 @@ import MainTable from './MainTable';
 import TransactionInput from './TransactionIInput';
 import CurrentBalance from './CurrentBalance';
 import CurrentMonthExpenses from './CurrentMonthExpenses';
-import ExpensesByMonthCategory from './ExpensesByMonthCategory';
 import type { Category, TransactionsResponse, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import profileImage from '../assets/profileSample.png'
+import CurrentMonthChart from './CurrentMonthChart';
 
 interface MainLayoutProps {
   data: TransactionsResponse;
@@ -18,10 +18,11 @@ interface MainLayoutProps {
   currentBalance: number;
   lastBalance: number;
   fetchTransactions: () => void;
+  expensesByMonthCategory: number[];
 }
 
-export const MainLayout = ({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions }: MainLayoutProps) => {
-  const cardStyle = 'rounded-md border-1 border-secondary w-1/4';
+export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory }: MainLayoutProps) {
+  const cardStyle = 'rounded-md border-1 border-secondary';
 
   const handleLogout = async (): Promise<void> => {
     if (isSample) {
@@ -60,17 +61,21 @@ export const MainLayout = ({ data, categories, user, isSample, currentAmount, la
             <div className={cardStyle}>
               <CurrentMonthExpenses currentAmount={currentAmount} lastAmount={lastAmount} />
             </div>
-            { !isSample && (
-              <div className={cardStyle}>
-                <ExpensesByMonthCategory categories={categories} />
+          </div>
+          <div className='flex flex-row px-5 gap-5'>
+            <div className='flex flex-col w-2/3 mt-5'>
+              <div className={`h-180 overflow-scroll ${cardStyle}`}>
+                <MainTable data={data} categories={categories} fetchTransactions={fetchTransactions} />
               </div>
-            )}
-          </div>
-          <div className={`h-180 overflow-scroll w-2/3 mx-5 mt-5 ${cardStyle}`}>
-            <MainTable data={data} categories={categories} fetchTransactions={fetchTransactions} />
-          </div>
-          <div className={`w-2/3 mx-5 mt-5 ${cardStyle}`}>
-            <TransactionInput categories={categories} isSample={isSample} fetchTransactions={fetchTransactions} />
+              <div className={`mt-5 ${cardStyle}`}>
+                <TransactionInput categories={categories} isSample={isSample} fetchTransactions={fetchTransactions} />
+              </div>
+            </div>
+            <div className='flex flex-col w-1/3 mt-5'>
+              <div className={`h-180 ${cardStyle}`}>
+                <CurrentMonthChart categories={categories} expenses={expensesByMonthCategory}/>
+              </div>
+            </div>
           </div>
         </div>
       </div>

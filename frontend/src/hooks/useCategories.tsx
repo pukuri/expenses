@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Category } from '@/types';
 
 export const useCategories = () => {
-  const [categories, setCategories] = useState<Category[]>([{id: 0, name: 'Uncategorized', color: ''}]);
+  const [categories, setCategories] = useState<Category[]>([{id: 0, name: 'Uncategorized', color: '#999'}]);
 
   const fetchCategories = async (): Promise<void> => {
     try {

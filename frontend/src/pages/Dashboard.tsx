@@ -4,8 +4,9 @@ import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { useCurrentMonthExpenses } from '@/hooks/useCurrentMonthExpenses';
 import { useLastBalance } from '@/hooks/useLastBalance';
-import { MainLayout } from '@/features/MainLayout';
 import { Navigate } from 'react-router-dom';
+import MainLayout from '@/features/MainLayout';
+import { useExpensesByMonthCategories } from '@/hooks/useExpensesByMonthCategory';
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ function DashboardContent() {
   const { categories } = useCategories();
   const { currentAmount, lastAmount } = useCurrentMonthExpenses();
   const { lastBalance } = useLastBalance();
+  const { expenses: expensesByMonthCategory } = useExpensesByMonthCategories({ categories });
 
   const currentBalance = data.data[0]?.running_balance ?? 0;
 
@@ -27,6 +29,7 @@ function DashboardContent() {
       currentBalance={currentBalance}
       lastBalance={lastBalance}
       fetchTransactions={fetchTransactions}
+      expensesByMonthCategory={expensesByMonthCategory}
     />
   );
 }
