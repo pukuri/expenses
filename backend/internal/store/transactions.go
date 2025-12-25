@@ -202,32 +202,49 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 	return returnValue, nil
 }
 
-func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string, categoryID int64) (int64, error) {
+type categoryReturnValue struct {
+	Amount int64  `json:"amount"`
+	Name   string `json:"name"`
+	Color  string `json:"color"`
+	ID     int64  `json:"id"`
+}
+
+func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string) ([]categoryReturnValue, error) {
 	query := `
-		SELECT COALESCE(SUM(amount), 0)
-		FROM transactions
-		WHERE date >= date_trunc('month', $1::date)
-			AND date < date_trunc('month', $1::date) + INTERVAL '1 month'
-			AND category_id = $2
+		SELECT COALESCE(SUM(t.amount), 0) as amount, c.name as name, c.color as color, c.id as id
+		FROM transactions t
+		JOIN categories c
+			ON t.category_id = c.id
+		WHERE t.date >= date_trunc('month', $1::date)
+			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
+		GROUP BY 2,3,4
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
 
-	var returnValue int64
-	err := s.db.QueryRowContext(
-		ctx,
-		query,
-		date,
-		categoryID,
-	).Scan(
-		&returnValue,
-	)
+	rows, err := s.db.QueryContext(ctx, query, date)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return returnValue, nil
+	var transactions []categoryReturnValue
+
+	for rows.Next() {
+		var transaction categoryReturnValue
+		err := rows.Scan(
+			&transaction.Amount,
+			&transaction.Name,
+			&transaction.Color,
+			&transaction.ID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	return transactions, nil
 }
 
 func (s *TransactionStore) GetBalanceByDate(ctx context.Context, date string) (int64, error) {

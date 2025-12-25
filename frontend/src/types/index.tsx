@@ -27,3 +27,10 @@ export interface User {
   name: string;
   picture: string;
 }
+
+export interface ExpensesByMonthCategory {
+  id: number;
+  amount: number;
+  name: string; 
+  color: string;
+}

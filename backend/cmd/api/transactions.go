@@ -106,23 +106,13 @@ func (app *application) getExpensesByMonthHandler(w http.ResponseWriter, r *http
 func (app *application) getExpensesByMonthCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	date := r.URL.Query().Get("date")
-	categoryID, err := strconv.ParseInt(r.URL.Query().Get("category_id"), 10, 64)
+	transactions, err := app.store.Transactions.GetExpensesByMonthCategory(ctx, date)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
 
-	amount, err := app.store.Transactions.GetExpensesByMonthCategory(ctx, date, categoryID)
-	if err != nil {
-		app.internalServerError(w, r, err)
-		return
-	}
-
-	type wrapper struct {
-		Amount any `json:"amount"`
-	}
-
-	if err := app.jsonResponse(w, http.StatusOK, &wrapper{Amount: amount}); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, transactions); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}

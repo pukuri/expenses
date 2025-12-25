@@ -1,11 +1,13 @@
 import MainLayout from '@/features/MainLayout';
 import { transactionSample } from '@/data/transactionSample';
 import { categorySample } from '@/data/categoriesSample';
-import type { Category, TransactionsResponse } from '@/types';
+import type { Category, ExpensesByMonthCategory, TransactionsResponse } from '@/types';
+import { expensesByMonthCategorySample } from '@/data/expensesByMonthCategorySample';
 
 function Sample() {
   const data: TransactionsResponse = { data: transactionSample };
   const categories: Category[] = categorySample;
+  const expensesByMonthCategory: ExpensesByMonthCategory[] = expensesByMonthCategorySample;
 
   return (
     <MainLayout
@@ -17,7 +19,7 @@ function Sample() {
       currentBalance={data.data[0].running_balance}
       lastBalance={13275000}
       fetchTransactions={() => {}}
-      expensesByMonthCategory={[1000000,2500000,1300000,4000000]}
+      expensesByMonthCategory={expensesByMonthCategory}
     />
   );
 }

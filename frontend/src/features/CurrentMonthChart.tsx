@@ -1,18 +1,22 @@
-import type { Category } from '@/types';
+import type { ExpensesByMonthCategory } from '@/types';
+import TodayDate from '@/utils/TodayDate';
 import {
   Chart as ChartJS,
   Tooltip,
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 
-export default function CurrentMonthChart({ categories, expenses }: { categories: Category[], expenses: number[] }) {
+
+export default function CurrentMonthChart({ expenses }: { expenses: ExpensesByMonthCategory[] }) {
   ChartJS.register(
     ArcElement,
     Tooltip,
     Legend 
   )
+
+  expenses = expenses.filter((d: ExpensesByMonthCategory) => d.name != 'Gajian')
   
   const options = {
     responsive: true,
@@ -25,12 +29,12 @@ export default function CurrentMonthChart({ categories, expenses }: { categories
   };
   
   const data = {
-    labels: categories.map((c) => ( c.name )),
+    labels: expenses.map((e) => ( e.name )),
     datasets: [
       {
         label: 'Total expenses',
-        data: expenses,
-        backgroundColor: categories.map((c) => ( c.color )),
+        data: expenses.map((e) => ( e.amount )),
+        backgroundColor: expenses.map((e) => ( e.color )),
         borderColor: '#0b0809',
         hoverBorderColor: '#fff',
       }
@@ -40,8 +44,9 @@ export default function CurrentMonthChart({ categories, expenses }: { categories
   return (
     <div className='p-4'>
       <h1 className='text-2xl'>This Month Expenses by Category</h1>
+      <h2 className='text-l text-chart-1'>{TodayDate()}</h2>
       <div className='pt-4 text-white'>
-        <Pie options={options} data={data}/>
+        <Doughnut options={options} data={data}/>
       </div>
     </div>
   )

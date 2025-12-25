@@ -2,7 +2,7 @@ import MainTable from './MainTable';
 import TransactionInput from './TransactionIInput';
 import CurrentBalance from './CurrentBalance';
 import CurrentMonthExpenses from './CurrentMonthExpenses';
-import type { Category, TransactionsResponse, User } from '@/types';
+import type { Category, ExpensesByMonthCategory, TransactionsResponse, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import profileImage from '../assets/profileSample.png'
@@ -18,7 +18,7 @@ interface MainLayoutProps {
   currentBalance: number;
   lastBalance: number;
   fetchTransactions: () => void;
-  expensesByMonthCategory: number[];
+  expensesByMonthCategory: ExpensesByMonthCategory[];
 }
 
 export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory }: MainLayoutProps) {
@@ -73,7 +73,7 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
             </div>
             <div className='flex flex-col w-1/3 mt-5'>
               <div className={`h-180 ${cardStyle}`}>
-                <CurrentMonthChart categories={categories} expenses={expensesByMonthCategory}/>
+                <CurrentMonthChart expenses={expensesByMonthCategory}/>
               </div>
             </div>
           </div>

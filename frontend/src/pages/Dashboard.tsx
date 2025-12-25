@@ -14,7 +14,7 @@ function DashboardContent() {
   const { categories } = useCategories();
   const { currentAmount, lastAmount } = useCurrentMonthExpenses();
   const { lastBalance } = useLastBalance();
-  const { expenses: expensesByMonthCategory } = useExpensesByMonthCategories({ categories });
+  const { expenses: expensesByMonthCategory } = useExpensesByMonthCategories();
 
   const currentBalance = data.data[0]?.running_balance ?? 0;
 
