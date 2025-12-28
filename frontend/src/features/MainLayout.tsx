@@ -1,5 +1,5 @@
 import MainTable from './MainTable';
-import TransactionInput from './TransactionIInput';
+import TransactionInput from './TransactionInput';
 import CurrentBalance from './CurrentBalance';
 import CurrentMonthExpenses from './CurrentMonthExpenses';
 import type { Category, ExpensesByMonthCategory, TransactionsResponse, User } from '@/types';

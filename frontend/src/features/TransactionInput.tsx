@@ -40,10 +40,8 @@ export default function TransactionInput({ categories, isSample, fetchTransactio
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
-      const result = await response.json()
       setFormData({ ...formData, amount: 0, description: '', category_id: 0 })
       fetchTransactions()
-      console.log('Success:', result);
     } finally {
       setLoading(false)
     }
@@ -74,7 +72,6 @@ export default function TransactionInput({ categories, isSample, fetchTransactio
                     const offset = date?.getTimezoneOffset()
                     const timzoneDate = new Date(date.getTime() - (offset*60*1000))
                     const fDate = timzoneDate.toISOString().split('T')[0]
-                    console.log(fDate)
                     if(fDate) {
                       setFormData({ ...formData, date: fDate })
                     } 
@@ -118,7 +115,7 @@ export default function TransactionInput({ categories, isSample, fetchTransactio
           </Select>
         </div>
         <div>
-          <Button variant="outline" size="icon" aria-label="Submit" disabled={loading} className="bg-primary">
+          <Button type="submit" variant="outline" size="icon" aria-label="Submit" name="Submit" disabled={loading} className="bg-primary">
             {loading ?
               <Loader color="white" height={19}/> :
               <Send color="white" height={19} />

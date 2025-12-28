@@ -77,7 +77,12 @@ export default function MainTable({ data, categories, fetchTransactions }: MainT
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
                           { categories.map((category) => (
-                            <DropdownMenuItem key={category.id} onSelect={() => updateCategory(datum.id, category.id)}>{category.name}</DropdownMenuItem>
+                            <DropdownMenuItem 
+                              key={category.id} 
+                              onSelect={() => updateCategory(datum.id, category.id)}
+                            >
+                              {category.name}
+                            </DropdownMenuItem>
                           ))}
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>

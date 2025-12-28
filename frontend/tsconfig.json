@@ -5,8 +5,12 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "types": ["jest", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"]
-    }
-  }
+    },
+    "target": "es2017",
+    "lib": ["dom", "es2017"],
+    "esModuleInterop": true
+  },
 }

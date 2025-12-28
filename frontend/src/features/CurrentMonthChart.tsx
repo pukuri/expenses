@@ -45,8 +45,8 @@ export default function CurrentMonthChart({ expenses }: { expenses: ExpensesByMo
     <div className='p-4'>
       <h1 className='text-2xl'>This Month Expenses by Category</h1>
       <h2 className='text-l text-chart-1'>{TodayDate()}</h2>
-      <div className='pt-4 text-white'>
-        <Doughnut options={options} data={data}/>
+      <div className='pt-4 text-white max-h-[546px] m-auto'>
+        <Doughnut options={options} data={data} />
       </div>
     </div>
   )

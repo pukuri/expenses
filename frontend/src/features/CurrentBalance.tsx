@@ -1,6 +1,6 @@
+import PercentageBadge from "@/components/percentageBadge";
 import AmountFormatter from "../utils/AmountFormatter";
 import { Badge } from "@/components/ui/badge";
-import PercentageBadge from "@/components/percentageBadge";
 
 interface CurrentBalanceProps {
   currentBalance: number;

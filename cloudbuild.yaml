@@ -4,6 +4,9 @@ steps:
   args: ['ci']
   dir: 'frontend'
 - name: 'gcr.io/cloud-builders/npm'
+  args: ['test']
+  dir: 'frontend'
+- name: 'gcr.io/cloud-builders/npm'
   args: ['run', 'build']  # Creates frontend/dist/
   dir: 'frontend'
 - name: 'gcr.io/cloud-builders/gsutil'
