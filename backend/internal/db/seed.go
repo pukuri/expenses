@@ -6,7 +6,7 @@ import (
 	"log"
 	"math/rand"
 
-	"github.com/pukuri/expenses/internal/store"
+	"github.com/pukuri/expenses/backend/internal/store"
 )
 
 var categoryNames = []string{

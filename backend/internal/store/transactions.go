@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 )
 
 type TransactionGet struct {
@@ -202,21 +203,21 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 	return returnValue, nil
 }
 
-type categoryReturnValue struct {
+type CategoryReturnValue struct {
 	Amount int64  `json:"amount"`
 	Name   string `json:"name"`
 	Color  string `json:"color"`
 	ID     int64  `json:"id"`
 }
 
-func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string) ([]categoryReturnValue, error) {
+func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string) ([]CategoryReturnValue, error) {
 	query := `
 		SELECT COALESCE(SUM(t.amount), 0) as amount, c.name as name, c.color as color, c.id as id
 		FROM transactions t
 		JOIN categories c
 			ON t.category_id = c.id
-		WHERE t.date >= date_trunc('month', $1::date)
-			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
+		WHERE t.date <= date_trunc('month', $1::date)
+			AND t.date > date_trunc('month', $1::date) - INTERVAL '30 days'
 		GROUP BY 2,3,4
 	`
 
@@ -228,10 +229,10 @@ func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date 
 		return nil, err
 	}
 
-	var transactions []categoryReturnValue
+	var transactions []CategoryReturnValue
 
 	for rows.Next() {
-		var transaction categoryReturnValue
+		var transaction CategoryReturnValue
 		err := rows.Scan(
 			&transaction.Amount,
 			&transaction.Name,
@@ -241,6 +242,7 @@ func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date 
 		if err != nil {
 			return nil, err
 		}
+		log.Println(transaction)
 		transactions = append(transactions, transaction)
 	}
 

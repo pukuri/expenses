@@ -1,4 +1,4 @@
-module github.com/pukuri/expenses
+module github.com/pukuri/expenses/backend
 
 go 1.24.2
 

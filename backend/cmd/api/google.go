@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/pukuri/expenses/internal/store"
+	"github.com/pukuri/expenses/backend/internal/store"
 )
 
 type UserOauthPayload struct {
@@ -26,7 +26,6 @@ func (app *application) googleAuth(w http.ResponseWriter, r *http.Request) {
 func (app *application) googleCallback(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
 
-	// exchange code for token
 	ctx := context.Background()
 	token, err := app.oauthConfig.Exchange(ctx, code)
 	if err != nil {
@@ -34,7 +33,6 @@ func (app *application) googleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get user info
 	client := app.oauthConfig.Client(ctx, token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {

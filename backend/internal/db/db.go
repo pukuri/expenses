@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pukuri/expenses/config"
+	"github.com/pukuri/expenses/backend/config"
 )
 
 func New(cfg *config.Config) (*sql.DB, error) {

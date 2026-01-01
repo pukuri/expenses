@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/pukuri/expenses/config"
-	"github.com/pukuri/expenses/internal/db"
-	"github.com/pukuri/expenses/internal/store"
+	"github.com/pukuri/expenses/backend/config"
+	"github.com/pukuri/expenses/backend/internal/db"
+	"github.com/pukuri/expenses/backend/internal/store"
 
 	_ "github.com/lib/pq"
 )

@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/pukuri/expenses/internal/store"
+	"github.com/pukuri/expenses/backend/internal/store"
 )
 
 type CreateCategoryPayload struct {

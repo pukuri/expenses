@@ -4,14 +4,14 @@ import (
 	"log"
 
 	_ "github.com/lib/pq"
-	"github.com/pukuri/expenses/config"
-	"github.com/pukuri/expenses/internal/db"
-	"github.com/pukuri/expenses/internal/store"
+	"github.com/pukuri/expenses/backend/config"
+	"github.com/pukuri/expenses/backend/internal/db"
+	"github.com/pukuri/expenses/backend/internal/store"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
-const version = "0.0.1"
+const version = "1.0.0"
 
 func main() {
 	cfg, err := config.Load()

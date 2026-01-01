@@ -8,8 +8,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/pukuri/expenses/config"
-	"github.com/pukuri/expenses/internal/store"
+	"github.com/pukuri/expenses/backend/config"
+	"github.com/pukuri/expenses/backend/internal/store"
 	"golang.org/x/oauth2"
 )
 
@@ -46,9 +46,10 @@ func (app *application) mount() http.Handler {
 			r.Get("/logged_user", app.googleLoggedUser)
 		})
 
+		r.Get("/health", app.healthCheckHandler)
+
 		r.Route("/v1", func(r chi.Router) {
 			r.Use(app.authenticationMiddleware)
-			r.Get("/health", app.healthCheckHandler)
 
 			r.Route("/transactions", func(r chi.Router) {
 				r.Post("/", app.createTransactionHandler)

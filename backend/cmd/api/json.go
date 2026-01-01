@@ -14,13 +14,9 @@ func init() {
 	Validate = validator.New(validator.WithRequiredStructEnabled())
 }
 
-// NullableInt64 is a wrapper around sql.NullInt64 to handle JSON unmarshalling.
-
 type NullableInt64 struct {
 	sql.NullInt64
 }
-
-// UnmarshalJSON implements the json.Unmarshaler interface.
 
 func (ni *NullableInt64) UnmarshalJSON(b []byte) error {
 	if string(b) == "null" {
