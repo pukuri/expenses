@@ -52,7 +52,7 @@ describe('MainTable', () => {
     const updateCategoryTrigger = await screen.getByText(/update category/i)
     await user.hover(updateCategoryTrigger)
     
-    screen.debug()
+    // screen.debug()
     
     // CANT MAKE THIS NESTED ELEMENT VISIBLE SO I JUST COMMENTED OUT THIS TEST FIRST
     // const categoryOption = await screen.getByText('Groceries')

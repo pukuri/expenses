@@ -8,11 +8,16 @@ function Home() {
           <Button>Login with Google</Button>
         </a>
       </div>
-      <h1 className="pt-5 hover:underline">
+      <div className='text-white text-center pt-5'>
         <a href="/sample" className="">
-          or go to sample page
+          <Button variant="outline">Go to sample page</Button>
         </a>
-      </h1>
+      </div>
+      <div className='text-white text-center pt-5'>
+        <a href="/story" className="">
+          <Button variant="outline">How I develop this app</Button>
+        </a>
+      </div>
     </div>
   );
 };

@@ -7,9 +7,9 @@ import { useLastBalance } from '@/hooks/useLastBalance';
 import { Navigate } from 'react-router-dom';
 import MainLayout from '@/features/MainLayout';
 import { useExpensesByMonthCategories } from '@/hooks/useExpensesByMonthCategory';
+import type { User } from '@/types';
 
-function DashboardContent() {
-  const { user } = useAuth();
+function DashboardContent({ user }: { user: User }) {
   const { data, fetchTransactions } = useTransactions();
   const { categories } = useCategories();
   const { currentAmount, lastAmount } = useCurrentMonthExpenses();
@@ -55,7 +55,7 @@ function Dashboard() {
     return <Navigate to="/" replace />;
   }
 
-  return <DashboardContent />;
+  return <DashboardContent user={user} />;
 }
 
 export default Dashboard;

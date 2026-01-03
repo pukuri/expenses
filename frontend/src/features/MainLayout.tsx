@@ -45,7 +45,7 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
 
   return (
     <div className='h-full'>
-      <div className="pb-10 mx-auto bg-background max-w-[1680px]">
+      <div className="pb-10 mx-auto max-w-420">
         <div className='flex flex-col'>
           <div className='flex p-5 justify-between'>
             <div className='flex flex-row'>
