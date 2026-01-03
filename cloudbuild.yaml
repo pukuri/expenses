@@ -4,7 +4,7 @@ steps:
   args: ['ci']
   dir: 'frontend'
 - name: 'gcr.io/cloud-builders/npm'
-  args: ['test']
+  args: ['test', '--clearCache']
   dir: 'frontend'
 - name: 'gcr.io/cloud-builders/npm'
   args: ['run', 'build']  # Creates frontend/dist/
