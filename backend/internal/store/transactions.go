@@ -182,9 +182,10 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 		FROM transactions t
 		LEFT JOIN categories c
 			ON c.id = t.category_id	
+			AND c.name <> 'Gajian'
 		WHERE t.date >= date_trunc('month', $1::date)
 			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
-			AND c.name <> 'Gajian'
+			
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -214,9 +215,9 @@ type CategoryReturnValue struct {
 
 func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string) ([]CategoryReturnValue, error) {
 	query := `
-		SELECT COALESCE(SUM(t.amount), 0) as amount, c.name as name, c.color as color, c.id as id
+		SELECT COALESCE(SUM(t.amount), 0) as amount, COALESCE(NULLIF(c.name, ''), 'Uncategorized') as name, COALESCE(NULLIF(c.color, ''), '#666') as color, COALESCE(c.id, 0) as id
 		FROM transactions t
-		JOIN categories c
+		LEFT JOIN categories c
 			ON t.category_id = c.id
 		WHERE t.date <= date_trunc('month', $1::date)
 			AND t.date > date_trunc('month', $1::date) - INTERVAL '30 days'
