@@ -22,7 +22,7 @@ type Storage struct {
 		Index(context.Context) ([]TransactionGet, error)
 		Create(context.Context, *Transaction) error
 		Delete(context.Context, int64) error
-		Update(context.Context, *Transaction) error
+		UpdateWithCascade(context.Context, *Transaction, int64) error
 	}
 	Categories interface {
 		Create(context.Context, *Category) error

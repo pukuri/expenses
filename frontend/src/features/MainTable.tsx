@@ -5,16 +5,39 @@ import { MoreVerticalIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import type { Category, Transaction, TransactionsResponse } from "@/types";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface MainTableProps {
+  isSample: boolean;
   data: TransactionsResponse;
   categories: Category[];
   fetchTransactions: () => void;
 }
 
-export default function MainTable({ data, categories, fetchTransactions }: MainTableProps) {
-  const updateCategory = async(id: number, category_id: number): Promise<void> => {
-    const formData = { "category_id": category_id }
+export default function MainTable({ isSample, data, categories, fetchTransactions }: MainTableProps) {
+  const [showDescriptionDialog, setShowDescriptionDialog] = useState<boolean>(false)
+  const [showAmountDialog, setShowAmountDialog] = useState<boolean>(false)
+  const [modalDescription, setModalDescription] = useState<string>('')
+  const [modalAmount, setModalAmount] = useState<number>(0)
+  const [modalId, setModalId] = useState<number>(0)
+  
+  const openDescriptionModal = (id: number, description: string) => {
+    setShowDescriptionDialog(true)
+    setModalDescription(description)
+    setModalId(id)
+  }
+
+  const openAmountModal = (id: number, amount: number) => {
+    setShowAmountDialog(true)
+    setModalAmount(amount)
+    setModalId(id)
+  }
+  
+  const fetchUpdate = async(id: number, formData: { [key: string]: string | number}): Promise<void> => {
+    if(isSample) return
+
     try {
       const response = await fetch(`/api/v1/transactions/${id}`, {
         method: 'PATCH',
@@ -30,6 +53,27 @@ export default function MainTable({ data, categories, fetchTransactions }: MainT
     } catch(err) {
       console.error(err)
     }
+  }
+
+  const updateDescription = async(): Promise<void> => {
+    if(isSample) return
+
+    const formData = { "description": modalDescription }
+    fetchUpdate(modalId, formData)
+  }
+
+  const updateAmount = async(): Promise<void> => {
+    if(isSample) return
+
+    const formData = { "amount": modalAmount }
+    fetchUpdate(modalId, formData)
+  }
+  
+  const updateCategory = async(id: number, category_id: number): Promise<void> => {
+    if(isSample) return
+
+    const formData = { "category_id": category_id }
+    fetchUpdate(id, formData)
   }
 
   return (
@@ -72,6 +116,8 @@ export default function MainTable({ data, categories, fetchTransactions }: MainT
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="" align="end">
+                    <DropdownMenuItem onSelect={() => openDescriptionModal(datum.id, datum.description) }>Update Description</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => openAmountModal(datum.id, datum.amount) }>Update Amount</DropdownMenuItem>
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>Update Category</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
@@ -94,6 +140,26 @@ export default function MainTable({ data, categories, fetchTransactions }: MainT
           ))}
         </TableBody>
       </Table>
+      
+      <Dialog open={showDescriptionDialog} onOpenChange={setShowDescriptionDialog}>
+        <DialogContent>
+          <DialogTitle>Change Transaction Description</DialogTitle>
+          <form className="flex flex-row gap-2" onSubmit={updateDescription}>
+            <Input id="description" name="description" placeholder={modalDescription} className="w-4/5" onChange={(e) => setModalDescription(e.target.value)} />
+            <Button type="submit" variant="outline" aria-label="Submit" name="Submit" className="bg-primary w-1/5">Submit</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAmountDialog} onOpenChange={setShowAmountDialog}>
+        <DialogContent>
+          <DialogTitle>Change Transaction Amount</DialogTitle>
+          <form className="flex flex-row gap-2" onSubmit={updateAmount}>
+            <Input id="description" name="description" placeholder={JSON.stringify(modalAmount)} className="w-4/5" onChange={(e) => setModalAmount(Number(e.target.value)| 0)} />
+            <Button type="submit" variant="outline" aria-label="Submit" name="Submit" className="bg-primary w-1/5">Submit</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

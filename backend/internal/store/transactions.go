@@ -306,19 +306,21 @@ func (s *TransactionStore) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s *TransactionStore) Update(ctx context.Context, transaction *Transaction) error {
-	query := `
+
+func (s *TransactionStore) UpdateWithCascade(ctx context.Context, transaction *Transaction, oldAmount int64) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Update the main transaction
+	updateQuery := `
 		UPDATE transactions
 		SET amount = $1, running_balance = $2, description = $3, category_id = $4
 		WHERE id = $5
 	`
-
-	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
-	defer cancel()
-
-	_, err := s.db.ExecContext(
-		ctx,
-		query,
+	_, err = tx.ExecContext(ctx, updateQuery,
 		transaction.Amount,
 		transaction.RunningBalance,
 		transaction.Description,
@@ -329,5 +331,19 @@ func (s *TransactionStore) Update(ctx context.Context, transaction *Transaction)
 		return err
 	}
 
-	return nil
+	// Update subsequent transactions if amount changed
+	if oldAmount != transaction.Amount {
+		amountDiff := transaction.Amount - oldAmount
+		cascadeQuery := `
+			UPDATE transactions 
+			SET running_balance = running_balance - $1 
+			WHERE id > $2
+		`
+		_, err = tx.ExecContext(ctx, cascadeQuery, amountDiff, transaction.ID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
 }

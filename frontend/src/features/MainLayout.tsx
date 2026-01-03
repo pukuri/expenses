@@ -71,7 +71,7 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
           <div className='flex flex-row px-5 gap-5'>
             <div className='flex flex-col w-2/3 mt-5'>
               <div className={`h-180 overflow-scroll ${cardStyle}`}>
-                <MainTable data={data} categories={categories} fetchTransactions={fetchTransactions} />
+                <MainTable isSample={isSample} data={data} categories={categories} fetchTransactions={fetchTransactions} />
               </div>
               <div className={`mt-5 ${cardStyle}`}>
                 <TransactionInput categories={categories} isSample={isSample} fetchTransactions={fetchTransactions} />

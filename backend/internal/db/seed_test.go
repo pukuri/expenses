@@ -71,7 +71,7 @@ func (m *MockTransactionStore) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (m *MockTransactionStore) Update(ctx context.Context, transaction *store.Transaction) error {
+func (m *MockTransactionStore) UpdateWithCascade(ctx context.Context, transaction *store.Transaction, oldAmount int64) error {
 	return nil
 }
 

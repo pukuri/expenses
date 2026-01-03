@@ -211,6 +211,7 @@ type UpdateTransactionPayload struct {
 
 func (app *application) updateTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	transaction := getTransactionFromCtx(r)
+	oldAmount := transaction.Amount // Store original amount for cascading
 
 	var payload UpdateTransactionPayload
 	if err := readJSON(w, r, &payload); err != nil {
@@ -224,6 +225,7 @@ func (app *application) updateTransactionHandler(w http.ResponseWriter, r *http.
 	}
 
 	if payload.Amount != nil {
+		transaction.RunningBalance = transaction.RunningBalance - (*payload.Amount - transaction.Amount)
 		transaction.Amount = *payload.Amount
 	}
 	if payload.RunningBalance != nil {
@@ -236,7 +238,7 @@ func (app *application) updateTransactionHandler(w http.ResponseWriter, r *http.
 		transaction.CategoryID = payload.CategoryID.NullInt64
 	}
 
-	if err := app.store.Transactions.Update(r.Context(), transaction); err != nil {
+	if err := app.store.Transactions.UpdateWithCascade(r.Context(), transaction, oldAmount); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}

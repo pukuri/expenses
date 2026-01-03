@@ -29,7 +29,7 @@ describe('MainTable', () => {
   })
 
   it('render table based on props data', () => {
-    render(<MainTable data={data} categories={categories} fetchTransactions={() => {}} />)
+    render(<MainTable isSample={true} data={data} categories={categories} fetchTransactions={() => {}} />)
     
     expect(screen.getByText(/Date/i)).toBeInTheDocument()
     expect(screen.getByText(/Amount/i)).toBeInTheDocument()
@@ -43,7 +43,7 @@ describe('MainTable', () => {
   })
   
   it('call fetch when update the category', async () => {
-    render(<MainTable data={data} categories={categories} fetchTransactions={() => {}} />)
+    render(<MainTable isSample={false} data={data} categories={categories} fetchTransactions={() => {}} />)
     const user = userEvent.setup()
 
     const menuButton = screen.getByRole('button', { name: /open menu/i})
