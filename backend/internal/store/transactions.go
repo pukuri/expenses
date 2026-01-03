@@ -180,7 +180,7 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 	query := `
 		SELECT COALESCE(SUM(t.amount), 0)
 		FROM transactions t
-		JOIN categories c
+		LEFT JOIN categories c
 			ON c.id = t.category_id	
 		WHERE t.date >= date_trunc('month', $1::date)
 			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
