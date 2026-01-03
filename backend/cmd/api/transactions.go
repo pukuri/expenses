@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/pukuri/expenses/backend/internal/store"
@@ -98,6 +99,43 @@ func (app *application) getExpensesByMonthHandler(w http.ResponseWriter, r *http
 	}
 
 	if err := app.jsonResponse(w, http.StatusOK, &wrapper{Amount: amount}); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
+
+type ExpensesByMonthsResponse struct {
+	Month  string `json:"month"`
+	Amount int64  `json:"amount"`
+}
+
+func (app *application) getExpensesByMonthsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	date := r.URL.Query().Get("date")
+
+	var returnValue []ExpensesByMonthsResponse
+	dates := getBackdate(date)
+
+	for _, monthDate := range dates {
+		amount, err := app.store.Transactions.GetExpensesByMonth(ctx, monthDate)
+		if err != nil {
+			app.internalServerError(w, r, err)
+			return
+		}
+
+		response := ExpensesByMonthsResponse{
+			Month:  monthDate,
+			Amount: amount,
+		}
+		returnValue = append(returnValue, response)
+	}
+
+	// sort ascending for frontend purpose
+	for i, j := 0, len(returnValue)-1; i < j; i, j = i+1, j-1 {
+		returnValue[i], returnValue[j] = returnValue[j], returnValue[i]
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, returnValue); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -233,4 +271,41 @@ func (app *application) transactionContextMiddleware(next http.Handler) http.Han
 		ctx = context.WithValue(ctx, transactionCtx, transaction)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func getBackdate(date string) []string {
+	parsedDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return []string{}
+	}
+
+	var dates []string
+
+	for i := 0; i < 14; i++ {
+		targetYear := parsedDate.Year()
+		targetMonth := int(parsedDate.Month()) - i
+
+		// Handle year rollover
+		for targetMonth <= 0 {
+			targetMonth += 12
+			targetYear--
+		}
+
+		originalDay := parsedDate.Day()
+
+		firstDayOfNextMonth := time.Date(targetYear, time.Month(targetMonth+1), 1, 0, 0, 0, 0, time.UTC)
+		lastDayOfTargetMonth := firstDayOfNextMonth.AddDate(0, 0, -1).Day()
+
+		// Use the original day, but cap it to the last day of the target month
+		targetDay := originalDay
+		if targetDay > lastDayOfTargetMonth {
+			targetDay = lastDayOfTargetMonth
+		}
+
+		targetDate := time.Date(targetYear, time.Month(targetMonth), targetDay, 0, 0, 0, 0, time.UTC)
+		formattedDate := targetDate.Format("2006-01-02")
+		dates = append(dates, formattedDate)
+	}
+
+	return dates
 }

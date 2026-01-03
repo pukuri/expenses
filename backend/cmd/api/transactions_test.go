@@ -473,6 +473,83 @@ func (suite *TransactionsTestSuite) TestGetExpensesByMonthCategoryHandler_StoreE
 	assert.Equal(suite.T(), "the server encountered a problem", response["error"])
 }
 
+func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_Success() {
+	mockStore := &MockTransactionStore{
+		expensesByMonth: 2500,
+		err:             nil,
+	}
+
+	originalStore := suite.app.store
+	suite.app.store = store.Storage{
+		Transactions: mockStore,
+	}
+	defer func() { suite.app.store = originalStore }()
+
+	req, err := http.NewRequest(http.MethodGet, "/expenses-by-months?date=2026-01-01", nil)
+	assert.NoError(suite.T(), err)
+
+	rr := httptest.NewRecorder()
+	suite.app.getExpensesByMonthsHandler(rr, req)
+
+	assert.Equal(suite.T(), http.StatusOK, rr.Code)
+
+	var response struct {
+		Data []ExpensesByMonthsResponse `json:"data"`
+	}
+	err = json.Unmarshal(rr.Body.Bytes(), &response)
+	assert.NoError(suite.T(), err)
+
+	assert.Len(suite.T(), response.Data, 14)
+
+	assert.Equal(suite.T(), "2024-12-01", response.Data[0].Month)
+	assert.Equal(suite.T(), "2025-01-01", response.Data[1].Month)
+	assert.Equal(suite.T(), "2025-02-01", response.Data[2].Month)
+	assert.Equal(suite.T(), "2026-01-01", response.Data[13].Month)
+
+	for _, entry := range response.Data {
+		assert.Equal(suite.T(), int64(2500), entry.Amount)
+	}
+}
+
+func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_EdgeCase() {
+	mockStore := &MockTransactionStore{
+		expensesByMonth: 1500,
+		err:             nil,
+	}
+
+	originalStore := suite.app.store
+	suite.app.store = store.Storage{
+		Transactions: mockStore,
+	}
+	defer func() { suite.app.store = originalStore }()
+
+	req, err := http.NewRequest(http.MethodGet, "/expenses-by-months?date=2025-12-31", nil)
+	assert.NoError(suite.T(), err)
+
+	rr := httptest.NewRecorder()
+	suite.app.getExpensesByMonthsHandler(rr, req)
+
+	assert.Equal(suite.T(), http.StatusOK, rr.Code)
+
+	var response struct {
+		Data []ExpensesByMonthsResponse `json:"data"`
+	}
+	err = json.Unmarshal(rr.Body.Bytes(), &response)
+	assert.NoError(suite.T(), err)
+
+	assert.Len(suite.T(), response.Data, 14)
+
+	assert.Equal(suite.T(), "2024-11-30", response.Data[0].Month)
+	// Check that February is handled correctly (should be 28th in non-leap year 2025)
+	assert.Equal(suite.T(), "2025-02-28", response.Data[3].Month)
+	assert.Equal(suite.T(), "2025-11-30", response.Data[12].Month)
+	assert.Equal(suite.T(), "2025-12-31", response.Data[13].Month)
+
+	for _, entry := range response.Data {
+		assert.Equal(suite.T(), int64(1500), entry.Amount)
+	}
+}
+
 func (suite *TransactionsTestSuite) TestDeleteTransactionHandler_Success() {
 	mockStore := &MockTransactionStore{
 		transaction: &store.Transaction{

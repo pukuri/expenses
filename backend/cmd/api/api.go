@@ -65,6 +65,7 @@ func (app *application) mount() http.Handler {
 			})
 
 			r.Get("/expenses_by_month", app.getExpensesByMonthHandler)
+			r.Get("/expenses_by_months", app.getExpensesByMonthsHandler)
 			r.Get("/expenses_by_month_category", app.getExpensesByMonthCategoryHandler)
 			r.Get("/balance_by_date", app.getBalanceByDateHandler)
 

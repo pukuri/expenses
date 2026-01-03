@@ -34,3 +34,8 @@ export interface ExpensesByMonthCategory {
   name: string; 
   color: string;
 }
+
+export interface MonthlyChartData {
+  month: string;
+  amount: number;
+}

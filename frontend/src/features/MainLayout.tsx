@@ -2,11 +2,12 @@ import MainTable from './MainTable';
 import TransactionInput from './TransactionInput';
 import CurrentBalance from './CurrentBalance';
 import CurrentMonthExpenses from './CurrentMonthExpenses';
-import type { Category, ExpensesByMonthCategory, TransactionsResponse, User } from '@/types';
+import type { Category, ExpensesByMonthCategory, MonthlyChartData, TransactionsResponse, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import profileImage from '../assets/profileSample.png'
 import CurrentMonthChart from './CurrentMonthChart';
+import ExpensesByMonths from './ExpensesByMonths';
 
 interface MainLayoutProps {
   data: TransactionsResponse;
@@ -19,9 +20,11 @@ interface MainLayoutProps {
   lastBalance: number;
   fetchTransactions: () => void;
   expensesByMonthCategory: ExpensesByMonthCategory[];
+  monthlyChartData: MonthlyChartData[];
 }
 
-export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory }: MainLayoutProps) {
+export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory, monthlyChartData }: MainLayoutProps) {
+
   const cardStyle = 'rounded-md border-1 border-secondary';
 
   const handleLogout = async (): Promise<void> => {
@@ -55,11 +58,16 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
             <Button size="sm" onClick={handleLogout}><LogOut /> Logout</Button>
           </div>
           <div className='mx-5 flex flex-row gap-5'>
-            <div className={cardStyle}>
-              <CurrentBalance currentBalance={currentBalance} lastBalance={lastBalance} />
+            <div className='flex flex-col gap-5 w-1/4'>
+              <div className={cardStyle}>
+                <CurrentBalance currentBalance={currentBalance} lastBalance={lastBalance} />
+              </div>
+              <div className={cardStyle}>
+                <CurrentMonthExpenses currentAmount={currentAmount} lastAmount={lastAmount} />
+              </div>
             </div>
-            <div className={cardStyle}>
-              <CurrentMonthExpenses currentAmount={currentAmount} lastAmount={lastAmount} />
+            <div className={'w-3/4 '+`${cardStyle}`}>
+              <ExpensesByMonths data={monthlyChartData} />
             </div>
           </div>
           <div className='flex flex-row px-5 gap-5'>

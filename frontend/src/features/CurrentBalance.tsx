@@ -1,4 +1,4 @@
-import PercentageBadge from "@/components/percentageBadge";
+import PercentageBadge from "@/components/PercentageBadge";
 import AmountFormatter from "../utils/AmountFormatter";
 import { Badge } from "@/components/ui/badge";
 

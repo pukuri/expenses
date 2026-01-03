@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 )
 
 type TransactionGet struct {
@@ -179,10 +178,13 @@ func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
 
 func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) (int64, error) {
 	query := `
-		SELECT COALESCE(SUM(amount), 0)
-		FROM transactions
-		WHERE date >= date_trunc('month', $1::date)
-			AND date < date_trunc('month', $1::date) + INTERVAL '1 month';
+		SELECT COALESCE(SUM(t.amount), 0)
+		FROM transactions t
+		JOIN categories c
+			ON c.id = t.category_id	
+		WHERE t.date >= date_trunc('month', $1::date)
+			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
+			AND c.name <> 'Gajian'
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -242,7 +244,6 @@ func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date 
 		if err != nil {
 			return nil, err
 		}
-		log.Println(transaction)
 		transactions = append(transactions, transaction)
 	}
 
