@@ -5,7 +5,6 @@ import CurrentMonthExpenses from './CurrentMonthExpenses';
 import type { Category, ExpensesByMonthCategory, MonthlyChartData, TransactionsResponse, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
-import profileImage from '../assets/profileSample.png'
 import CurrentMonthChart from './CurrentMonthChart';
 import ExpensesByMonths from './ExpensesByMonths';
 
@@ -24,7 +23,6 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory, monthlyChartData }: MainLayoutProps) {
-
   const cardStyle = 'rounded-md border-1 border-secondary';
 
   const handleLogout = async (): Promise<void> => {
@@ -52,7 +50,7 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
         <div className='flex flex-col'>
           <div className='flex p-5 justify-between'>
             <div className='flex flex-row'>
-              <img src={isSample ? profileImage : user?.picture} className='rounded-full' alt="profile picture" referrerPolicy="no-referrer" width={36}/>
+              <img src={isSample ? '/images/profileImage.png' : user?.picture} className='rounded-full' alt="profile picture" referrerPolicy="no-referrer" width={36}/>
               <h1 className='text-xl text-foreground ml-4 pt-1'>Welcome, {isSample ? 'Guest' : user?.name}</h1>
             </div>
             <Button size="sm" onClick={handleLogout}><LogOut /> Logout</Button>

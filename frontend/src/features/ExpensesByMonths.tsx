@@ -15,7 +15,7 @@ export default function ExpensesByMonths({ data }: { data: MonthlyChartData[] })
       <p>Expenses Comparison by Months</p>
       <div className="flex flex-row mt-9">
         <ChartContainer config={chartConfig} className="aspect-auto h-50 w-full">
-          <BarChart accessibilityLayer data={data}>
+          <BarChart data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"

@@ -1,5 +1,4 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import erdPhase1 from '../assets/erdPhase1.png'
 import { CloudUpload, HardDrive, KeyRound, LayoutDashboard, NotebookPen } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 
@@ -344,7 +343,7 @@ async function handleRequest(request) {
                   {planContent}
                 </ReactMarkdown>
               </div>
-              <img src={erdPhase1} className="max-w-150 m-auto my-4" alt="ERD for the first phase"/>
+              <img src='images/erdPhase1.png' className="max-w-150 m-auto my-4" alt="ERD for the first phase"/>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
