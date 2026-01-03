@@ -5,7 +5,7 @@ import { MoreVerticalIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import type { Category, Transaction, TransactionsResponse } from "@/types";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -35,7 +35,9 @@ export default function MainTable({ isSample, data, categories, fetchTransaction
     setModalId(id)
   }
   
-  const fetchUpdate = async(id: number, formData: { [key: string]: string | number}): Promise<void> => {
+  const fetchUpdate = async(e: FormEvent | null, id: number, formData: { [key: string]: string | number}): Promise<void> => {
+    e?.preventDefault()
+
     if(isSample) return
 
     try {
@@ -55,25 +57,27 @@ export default function MainTable({ isSample, data, categories, fetchTransaction
     }
   }
 
-  const updateDescription = async(): Promise<void> => {
+  const updateDescription = async(e: FormEvent): Promise<void> => {
     if(isSample) return
 
     const formData = { "description": modalDescription }
-    fetchUpdate(modalId, formData)
+    fetchUpdate(e, modalId, formData)
+    setShowDescriptionDialog(false)
   }
 
-  const updateAmount = async(): Promise<void> => {
+  const updateAmount = async(e: FormEvent): Promise<void> => {
     if(isSample) return
 
     const formData = { "amount": modalAmount }
-    fetchUpdate(modalId, formData)
+    fetchUpdate(e, modalId, formData)
+    setShowAmountDialog(false)
   }
   
   const updateCategory = async(id: number, category_id: number): Promise<void> => {
     if(isSample) return
 
     const formData = { "category_id": category_id }
-    fetchUpdate(id, formData)
+    fetchUpdate(null, id, formData)
   }
 
   return (
