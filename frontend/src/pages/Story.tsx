@@ -317,12 +317,12 @@ async function handleRequest(request) {
   `;
 
   const textClass = "text-[16px] prose prose-p:text-[16px] prose-p:mb-4 max-w-none prose-a:text-blue-600 prose-a:underline text-white"
-  const markdownClass = "text-[16px] mb-4 prose prose-pre:bg-gray-900 prose-pre:border max-w-none prose-pre:text-sm"
+  const markdownClass = "text-[16px] mb-4 mx-auto prose prose-pre:bg-gray-900 prose-pre:border max-w-none prose-pre:text-sm"
 
   return (
-    <div className="py-10 mx-auto max-w-420">
+    <div className="py-10 mx-auto max-w-360">
       <h1 className="text-center text-4xl">Expenses Tracker App From Zero</h1>
-      <h2 className="text-center text-xl text-gray-500 pt-2">A story about how I develop and deploy an app from scratch</h2>
+      <h2 className="text-center text-xl text-gray-500 pt-2">How I develop and deploy an app from scratch</h2>
       
       <div className="py-10 flex flex-col gap-4">
         <div className={textClass}>
@@ -434,11 +434,13 @@ async function handleRequest(request) {
           <AccordionItem value="item-5">
             <AccordionTrigger className="font-bold text-lg"><span className="flex flex-row gap-2"><CloudUpload /> The Deployment</span></AccordionTrigger>
             <AccordionContent>
+              <img src='images/deployment1.png' className="m-auto my-4" alt="ERD for the first phase"/>
               <div className={textClass}>
                 <ReactMarkdown components={{ a: LinkRenderer }}>
                   {deploymentContent1}
                 </ReactMarkdown>
               </div>
+              <img src='images/deployment2.png' className="m-auto my-4" alt="ERD for the first phase"/>
               <div className={markdownClass}>
                 <ReactMarkdown>
                   {cloudflareCodeExample}

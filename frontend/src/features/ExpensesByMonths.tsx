@@ -10,6 +10,8 @@ export default function ExpensesByMonths({ data }: { data: MonthlyChartData[] })
     },
   } satisfies ChartConfig
   
+  data = data.map(d => ({ month: d.month.substring(0,7), amount: d.amount }))
+  
   return (
     <div className="p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white">
       <p>Expenses Comparison by Months</p>
