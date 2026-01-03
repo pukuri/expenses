@@ -1,5 +1,5 @@
 
-import PercentageBadge from "@/components/percentageBadge"
+import PercentageBadge from "@/components/PercentageBadge"
 import { render, screen } from "@testing-library/react"
 
 describe('PercentageBadge', () => {
