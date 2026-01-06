@@ -33,7 +33,7 @@ type TransactionStore struct {
 func (s *TransactionStore) Create(ctx context.Context, transaction *Transaction) error {
 	query := `
 		INSERT INTO transactions (category_id, amount, running_balance, description, date)	
-		VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at, updated_at
+		VALUES ($1, $2::bigint, $3::bigint, $4::text, $5::timestamp) RETURNING id, created_at, updated_at
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -317,8 +317,8 @@ func (s *TransactionStore) UpdateWithCascade(ctx context.Context, transaction *T
 	// Update the main transaction
 	updateQuery := `
 		UPDATE transactions
-		SET amount = $1, running_balance = $2, description = $3, category_id = $4
-		WHERE id = $5
+		SET amount = $1::bigint, running_balance = $2::bigint, description = $3::text, category_id = $4
+		WHERE id = $5::bigint
 	`
 	_, err = tx.ExecContext(ctx, updateQuery,
 		transaction.Amount,
@@ -336,8 +336,8 @@ func (s *TransactionStore) UpdateWithCascade(ctx context.Context, transaction *T
 		amountDiff := transaction.Amount - oldAmount
 		cascadeQuery := `
 			UPDATE transactions 
-			SET running_balance = running_balance - $1 
-			WHERE id > $2
+			SET running_balance = running_balance - $1::bigint 
+			WHERE id > $2::bigint
 		`
 		_, err = tx.ExecContext(ctx, cascadeQuery, amountDiff, transaction.ID)
 		if err != nil {

@@ -25,26 +25,6 @@ steps:
   dir: 'backend'
 
 #Migration steps
-- id: 'Start Cloud SQL Proxy'
-  name: 'gcr.io/cloud-builders/docker'
-  args:
-    - 'run'
-    - '-d'
-    - '--network=cloudbuild'
-    - '--name=cloudsql-proxy'
-    - 'asia.gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.10.0'
-    - ${_INSTANCE_CONNECTION_NAME}
-    - '--port=5432'
-    - '--address=0.0.0.0'
-- id: 'Check Proxy Health & Wait'
-  name: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Waiting 10 seconds for proxy to initialize..."
-      sleep 10
-      echo "Displaying proxy logs (check for 'permission denied' or 'instance not found'):"
-      docker logs cloudsql-proxy || true
 - id: 'Run Database Migrations'
   name: 'golang:latest'
   entrypoint: 'sh'
@@ -53,7 +33,7 @@ steps:
     - |
       go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       
-      migrate -path backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@cloudsql-proxy:5432/${_DB_NAME}?sslmode=disable" up
+      migrate -path backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@${_DB_CONNECTION}/${_DB_NAME}?sslmode=require&channel_binding=require&search_path=public&prefer_simple_protocol=true&binary_parameters=yes" up
 
 # Cloud run deployment steps
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -61,6 +41,7 @@ steps:
   args:
   - '-c'
   - |
+    echo "DB_ADDR=$(gcloud secrets versions access latest --secret=db-addr)" >> env_secrets.env
     echo "DB_USER=$(gcloud secrets versions access latest --secret=db-user)" >> env_secrets.env
     echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret=db-password)" >> env_secrets.env
     echo "DB_NAME=$(gcloud secrets versions access latest --secret=db-name)" >> env_secrets.env

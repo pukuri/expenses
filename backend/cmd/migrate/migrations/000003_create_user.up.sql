@@ -1,3 +1,5 @@
+SET search_path TO public;
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   google_id VARCHAR(255) UNIQUE NOT NULL,
@@ -6,4 +8,4 @@ CREATE TABLE users (
   picture TEXT,
   created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
   updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
-)
+);

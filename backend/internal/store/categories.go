@@ -19,7 +19,7 @@ type CategoryStore struct {
 func (s *CategoryStore) Create(ctx context.Context, category *Category) error {
 	query := `
 		INSERT INTO categories (name, color)
-		VALUES ($1, $2) RETURNING id, created_at
+		VALUES ($1::text, $2::text) RETURNING id, created_at
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)

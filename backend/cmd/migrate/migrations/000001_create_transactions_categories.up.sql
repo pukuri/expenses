@@ -1,3 +1,5 @@
+SET search_path TO public;
+
 CREATE TABLE IF NOT EXISTS categories(
   id bigserial PRIMARY KEY,
   name varchar(100) UNIQUE NOT NULL,
