@@ -55,8 +55,8 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
             </div>
             <Button size="sm" onClick={handleLogout}><LogOut /> Logout</Button>
           </div>
-          <div className='mx-5 flex flex-row gap-5'>
-            <div className='flex flex-col gap-5 w-1/4'>
+          <div className='mx-5 flex flex-col md:flex-row gap-5'>
+            <div className='flex flex-col gap-5 w-full md:w-1/4'>
               <div className={cardStyle}>
                 <CurrentBalance currentBalance={currentBalance} lastBalance={lastBalance} />
               </div>
@@ -64,12 +64,12 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
                 <CurrentMonthExpenses currentAmount={currentAmount} lastAmount={lastAmount} />
               </div>
             </div>
-            <div className={'w-3/4 '+`${cardStyle}`}>
+            <div className={'w-full md:w-3/4 '+`${cardStyle}`}>
               <ExpensesByMonths data={monthlyChartData} />
             </div>
           </div>
-          <div className='flex flex-row px-5 gap-5'>
-            <div className='flex flex-col w-2/3 mt-5'>
+          <div className='flex flex-col md:flex-row px-5 gap-5'>
+            <div className='flex flex-col w-full md:w-2/3 mt-5'>
               <div className={`h-180 overflow-scroll ${cardStyle}`}>
                 <MainTable isSample={isSample} data={data} categories={categories} fetchTransactions={fetchTransactions} />
               </div>
@@ -77,7 +77,7 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
                 <TransactionInput categories={categories} isSample={isSample} fetchTransactions={fetchTransactions} />
               </div>
             </div>
-            <div className='flex flex-col w-1/3 mt-5'>
+            <div className='flex flex-col w-full md:w-1/3 md:mt-5'>
               <div className={`h-180 ${cardStyle}`}>
                 <CurrentMonthChart expenses={expensesByMonthCategory}/>
               </div>

@@ -93,6 +93,8 @@ Visit the [Github repo]("https://github.com/pukuri/expenses/blob/main/cloudbuild
 
 One hiccup hit post-deploy: frontend pages returned 404s despite successful builds, thanks to Cloudflare's strict route mapping clashing with bucket paths. Fixed it cleanly with Cloudflare Workers. Route expenses.fachriakbarr.com/api/* to Cloud Run for backend APIs and the rest to the GCS bucket for frontend. Now everything flows: static UI loads instantly, API calls hit the right service, all proxied securely through Cloudflare.
 
+Update January 6th: Turns out Google Cloud SQL is pretty expensive despite already using its lower spec machines. So I switched to [Neon]("https://neon.com/") and using its free tier. My app is not that SQL heavy anyway.
+
 Below is the Cloudflare worker code to handle routing that I developed with the help of LLMs.
   `;
 
@@ -316,7 +318,7 @@ async function handleRequest(request) {
 \`\`\`
   `;
 
-  const textClass = "text-[16px] prose prose-p:text-[16px] prose-p:mb-4 max-w-none prose-a:text-blue-600 prose-a:underline text-white"
+  const textClass = "text-[16px] prose prose-p:text-[16px] prose-p:mb-4 max-w-120 md:max-w-none prose-a:text-blue-600 prose-a:underline text-white"
   const markdownClass = "text-[16px] mb-4 mx-auto prose prose-pre:bg-gray-900 prose-pre:border max-w-none prose-pre:text-sm"
 
   return (
@@ -324,7 +326,7 @@ async function handleRequest(request) {
       <h1 className="text-center text-4xl">Expenses Tracker App From Zero</h1>
       <h2 className="text-center text-xl text-gray-500 pt-2">How I develop and deploy an app from scratch</h2>
       
-      <div className="py-10 flex flex-col gap-4">
+      <div className="py-10 px-4 flex flex-col gap-4">
         <div className={textClass}>
           <ReactMarkdown components={{ a: LinkRenderer }}>
             {introContent}

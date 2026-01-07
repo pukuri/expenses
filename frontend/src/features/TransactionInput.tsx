@@ -49,8 +49,8 @@ export default function TransactionInput({ categories, isSample, fetchTransactio
   
   return (
     <div className="w-full p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white">
-      <form onSubmit={handleSubmit} className="flex flex-row gap-2">
-        <div className="w-3/12 flex flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-2">
+        <div className="md:w-3/12 flex flex-col">
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -83,21 +83,21 @@ export default function TransactionInput({ categories, isSample, fetchTransactio
             </PopoverContent>
           </Popover>
         </div>
-        <div className="w-3/12 flex flex-col">
+        <div className="md:w-3/12 flex flex-col">
           <Input 
             type="number" 
             onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) || 0 })} 
             placeholder="Amount"
             required></Input>
         </div>
-        <div className="w-3/12 flex flex-col">
+        <div className="md:w-3/12 flex flex-col">
           <Input 
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
             placeholder="Description"
             required></Input>
         </div>
-        <div className="w-3/12 flex flex-col">
+        <div className="md:w-3/12 flex flex-col">
           <Select
             value={JSON.stringify(formData.category_id)}
             onValueChange = {(value) => setFormData({ ...formData, category_id: Number(value) })}
