@@ -182,9 +182,9 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 		FROM transactions t
 		LEFT JOIN categories c
 			ON c.id = t.category_id	
-			AND c.name <> 'Gajian'
 		WHERE t.date >= date_trunc('month', $1::date)
 			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
+			AND c.name <> 'Gajian'
 			
 	`
 
@@ -305,7 +305,6 @@ func (s *TransactionStore) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
-
 
 func (s *TransactionStore) UpdateWithCascade(ctx context.Context, transaction *Transaction, oldAmount int64) error {
 	tx, err := s.db.BeginTx(ctx, nil)
