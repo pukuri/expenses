@@ -10,9 +10,9 @@ export const useExpensesByMonthCategory12Months = () => {
     const months: string[] = []
     
     for (let i = 0; i <= 11; i++) {
-      const date = new Date(today.getFullYear(), today.getMonth() - i, 1)
-      const monthStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`
-      months.push(monthStr)
+      const date = new Date(today.getFullYear(), today.getMonth() - i + 1, 0)
+      const dateStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+      months.push(dateStr)
     }
     
     return months
@@ -21,7 +21,7 @@ export const useExpensesByMonthCategory12Months = () => {
   const fetchExpensesForMonth = async (month: string): Promise<ExpensesByMonthCategory[]> => {
     try {
       const response = await fetch("/api/v1/expenses_by_month_category?" + new URLSearchParams({
-        date: `${month}-01`
+        date: month
       }))
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

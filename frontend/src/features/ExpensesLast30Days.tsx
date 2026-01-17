@@ -14,7 +14,7 @@ export default function ExpensesLast30Days({ data }: { data: ChartDataByDate[] }
   
   return (
     <div className="p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white">
-      <p>Expenses Last 30 Days</p>
+      <p>Last 30 Days Expenses Breakdown</p>
       <div className="flex flex-row mt-9">
         <ChartContainer config={chartConfig} className="aspect-auto h-50 w-full">
           <BarChart data={data}>

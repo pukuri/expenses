@@ -21,7 +21,7 @@ export default function CurrentMonthExpenses({ currentAmount, lastAmount }: Curr
   return (
     <div className="w-full p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white">
       <div className="flex flex-row justify-between mb-4">
-        <p>This Month Expenses</p>
+        <p>Last 30 Days Expenses Total</p>
         <Badge
           variant="secondary"
           className="bg-primary text-white font-medium text-xs"
