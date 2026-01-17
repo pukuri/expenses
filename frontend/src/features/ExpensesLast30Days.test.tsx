@@ -32,12 +32,12 @@ describe('ExpensesLast30Days', () => {
   it('renders component with data', () => {
     render(<ExpensesLast30Days data={mockData} />)
     
-    expect(screen.getByText('Expenses Last 30 Days')).toBeInTheDocument()
+    expect(screen.getByText('Last 30 Days Expenses Breakdown')).toBeInTheDocument()
   })
 
   it('renders component with empty data', () => {
     render(<ExpensesLast30Days data={[]} />)
     
-    expect(screen.getByText('Expenses Last 30 Days')).toBeInTheDocument()
+    expect(screen.getByText('Last 30 Days Expenses Breakdown')).toBeInTheDocument()
   })
 })
