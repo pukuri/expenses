@@ -24,6 +24,7 @@ type MockTransactionStore struct {
 	expensesByMonth         int64
 	balanceByDate           int64
 	expensesByMonthCategory []store.CategoryReturnValue
+	expensesLast30Days      []store.AmountDaily
 }
 
 func (m *MockTransactionStore) Create(ctx context.Context, transaction *store.Transaction) error {
@@ -64,6 +65,14 @@ func (m *MockTransactionStore) GetExpensesByMonthCategory(ctx context.Context, d
 	}
 
 	return m.expensesByMonthCategory, nil
+}
+
+func (m *MockTransactionStore) GetExpensesLast30Days(ctx context.Context) ([]store.AmountDaily, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+
+	return m.expensesLast30Days, nil
 }
 
 func (m *MockTransactionStore) GetBalanceByDate(ctx context.Context, date string) (int64, error) {
@@ -524,10 +533,10 @@ func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_Success() {
 
 	assert.Len(suite.T(), response.Data, 14)
 
-	assert.Equal(suite.T(), "2024-12-01", response.Data[0].Month)
-	assert.Equal(suite.T(), "2025-01-01", response.Data[1].Month)
-	assert.Equal(suite.T(), "2025-02-01", response.Data[2].Month)
-	assert.Equal(suite.T(), "2026-01-01", response.Data[13].Month)
+	assert.Equal(suite.T(), "2024-12-01", response.Data[0].Date)
+	assert.Equal(suite.T(), "2025-01-01", response.Data[1].Date)
+	assert.Equal(suite.T(), "2025-02-01", response.Data[2].Date)
+	assert.Equal(suite.T(), "2026-01-01", response.Data[13].Date)
 
 	for _, entry := range response.Data {
 		assert.Equal(suite.T(), int64(2500), entry.Amount)
@@ -562,11 +571,11 @@ func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_EdgeCase() {
 
 	assert.Len(suite.T(), response.Data, 14)
 
-	assert.Equal(suite.T(), "2024-11-30", response.Data[0].Month)
+	assert.Equal(suite.T(), "2024-11-30", response.Data[0].Date)
 	// Check that February is handled correctly (should be 28th in non-leap year 2025)
-	assert.Equal(suite.T(), "2025-02-28", response.Data[3].Month)
-	assert.Equal(suite.T(), "2025-11-30", response.Data[12].Month)
-	assert.Equal(suite.T(), "2025-12-31", response.Data[13].Month)
+	assert.Equal(suite.T(), "2025-02-28", response.Data[3].Date)
+	assert.Equal(suite.T(), "2025-11-30", response.Data[12].Date)
+	assert.Equal(suite.T(), "2025-12-31", response.Data[13].Date)
 
 	for _, entry := range response.Data {
 		assert.Equal(suite.T(), int64(1500), entry.Amount)
@@ -759,14 +768,14 @@ func (suite *TransactionsTestSuite) TestUpdateTransactionHandler_CascadingUpdate
 		ID:             3,
 		Amount:         300,
 		RunningBalance: 4200,
-		Description:    "Third Transaction", 
+		Description:    "Third Transaction",
 		Date:           "2023-01-03T10:00:00Z",
 	}
 
 	mockStore := &MockTransactionStore{
-		transaction: transaction1, // This is the transaction we'll update
+		transaction:     transaction1, // This is the transaction we'll update
 		transactionList: []*store.Transaction{transaction1, transaction2, transaction3},
-		err: nil,
+		err:             nil,
 	}
 
 	originalStore := suite.app.store
@@ -829,9 +838,9 @@ func (suite *TransactionsTestSuite) TestUpdateTransactionHandler_CascadingUpdate
 	}
 
 	mockStore := &MockTransactionStore{
-		transaction: transaction1,
+		transaction:     transaction1,
 		transactionList: []*store.Transaction{transaction1, transaction2},
-		err: nil,
+		err:             nil,
 	}
 
 	originalStore := suite.app.store
@@ -888,9 +897,9 @@ func (suite *TransactionsTestSuite) TestUpdateTransactionHandler_CascadingUpdate
 	}
 
 	mockStore := &MockTransactionStore{
-		transaction: transaction2, // Update the last transaction
+		transaction:     transaction2, // Update the last transaction
 		transactionList: []*store.Transaction{transaction1, transaction2},
-		err: nil,
+		err:             nil,
 	}
 
 	originalStore := suite.app.store

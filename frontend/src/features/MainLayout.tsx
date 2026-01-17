@@ -2,11 +2,11 @@ import MainTable from './MainTable';
 import TransactionInput from './TransactionInput';
 import CurrentBalance from './CurrentBalance';
 import CurrentMonthExpenses from './CurrentMonthExpenses';
-import type { Category, ExpensesByMonthCategory, MonthlyChartData, TransactionsResponse, User } from '@/types';
+import type { Category, ExpensesByMonthCategory, ChartDataByDate, TransactionsResponse, User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import CurrentMonthChart from './CurrentMonthChart';
-import ExpensesByMonths from './ExpensesByMonths';
+import ExpensesLast30Days from './ExpensesLast30Days';
 
 interface MainLayoutProps {
   data: TransactionsResponse;
@@ -19,10 +19,10 @@ interface MainLayoutProps {
   lastBalance: number;
   fetchTransactions: () => void;
   expensesByMonthCategory: ExpensesByMonthCategory[];
-  monthlyChartData: MonthlyChartData[];
+  dailyChartData: ChartDataByDate[];
 }
 
-export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory, monthlyChartData }: MainLayoutProps) {
+export default function MainLayout({ data, categories, user, isSample, currentAmount, lastAmount, currentBalance, lastBalance, fetchTransactions, expensesByMonthCategory, dailyChartData }: MainLayoutProps) {
   const cardStyle = 'rounded-md border-1 border-secondary';
 
   const handleLogout = async (): Promise<void> => {
@@ -65,7 +65,7 @@ export default function MainLayout({ data, categories, user, isSample, currentAm
               </div>
             </div>
             <div className={'w-full md:w-3/4 '+`${cardStyle}`}>
-              <ExpensesByMonths data={monthlyChartData} />
+              <ExpensesLast30Days data={dailyChartData} />
             </div>
           </div>
           <div className='flex flex-col md:flex-row px-5 gap-5'>

@@ -1,15 +1,15 @@
 import MainLayout from '@/features/MainLayout';
 import { transactionSample } from '@/data/transactionSample';
 import { categorySample } from '@/data/categoriesSample';
-import type { Category, ExpensesByMonthCategory, MonthlyChartData, TransactionsResponse } from '@/types';
+import type { Category, ExpensesByMonthCategory, ChartDataByDate, TransactionsResponse } from '@/types';
 import { expensesByMonthCategorySample } from '@/data/expensesByMonthCategorySample';
-import { monthlyChartDataSample } from '@/data/monthlyChartDataSample';
+import { last30DaysChartDataSample } from '@/data/last30DaysChartDataSample';
 
 function Sample() {
   const data: TransactionsResponse = { data: transactionSample };
   const categories: Category[] = categorySample;
   const expensesByMonthCategory: ExpensesByMonthCategory[] = expensesByMonthCategorySample;
-  const monthlyChartData: MonthlyChartData[] = monthlyChartDataSample
+  const dailyChartData: ChartDataByDate[] = last30DaysChartDataSample
 
   return (
     <MainLayout
@@ -22,7 +22,7 @@ function Sample() {
       lastBalance={13275000}
       fetchTransactions={() => {}}
       expensesByMonthCategory={expensesByMonthCategory}
-      monthlyChartData={monthlyChartData}
+      dailyChartData={dailyChartData}
     />
   );
 }

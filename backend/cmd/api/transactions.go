@@ -105,7 +105,7 @@ func (app *application) getExpensesByMonthHandler(w http.ResponseWriter, r *http
 }
 
 type ExpensesByMonthsResponse struct {
-	Month  string `json:"month"`
+	Date  string `json:"date"`
 	Amount int64  `json:"amount"`
 }
 
@@ -124,7 +124,7 @@ func (app *application) getExpensesByMonthsHandler(w http.ResponseWriter, r *htt
 		}
 
 		response := ExpensesByMonthsResponse{
-			Month:  monthDate,
+			Date:  monthDate,
 			Amount: amount,
 		}
 		returnValue = append(returnValue, response)
@@ -145,6 +145,20 @@ func (app *application) getExpensesByMonthCategoryHandler(w http.ResponseWriter,
 	ctx := r.Context()
 	date := r.URL.Query().Get("date")
 	transactions, err := app.store.Transactions.GetExpensesByMonthCategory(ctx, date)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	if err := app.jsonResponse(w, http.StatusOK, transactions); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
+
+func (app *application) getExpensesLast30DaysHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	transactions, err := app.store.Transactions.GetExpensesLast30Days(ctx)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return

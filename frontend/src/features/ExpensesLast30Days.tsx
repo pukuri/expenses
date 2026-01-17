@@ -2,7 +2,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import type { ChartDataByDate } from '@/types';
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
-export default function ExpensesByMonths({ data }: { data: ChartDataByDate[] }) {
+export default function ExpensesLast30Days({ data }: { data: ChartDataByDate[] }) {
   const chartConfig = {
     amount: {
       label: "Amount",
@@ -10,17 +10,18 @@ export default function ExpensesByMonths({ data }: { data: ChartDataByDate[] }) 
     },
   } satisfies ChartConfig
   
-  data = data.map(d => ({ date: d.date.substring(0,7), amount: d.amount }))
+  console.log(data)
+  data = data.map(d => ({ date: d.date, amount: d.amount }))
   
   return (
     <div className="p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white">
-      <p>Expenses Comparison by Months</p>
+      <p>Expenses Last 30 Days</p>
       <div className="flex flex-row mt-9">
         <ChartContainer config={chartConfig} className="aspect-auto h-50 w-full">
           <BarChart data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="date"
               tickLine={true}
               tickMargin={10}
               axisLine={false}

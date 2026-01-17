@@ -178,13 +178,11 @@ func (s *TransactionStore) GetLast(ctx context.Context) (*Transaction, error) {
 
 func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) (int64, error) {
 	query := `
-		SELECT COALESCE(SUM(t.amount), 0)
-		FROM transactions t
-		LEFT JOIN categories c
-			ON c.id = t.category_id	
-		WHERE t.date >= date_trunc('month', $1::date)
-			AND t.date < date_trunc('month', $1::date) + INTERVAL '1 month'
-			AND c.name <> 'Gajian'
+		SELECT COALESCE(SUM(amount), 0)
+		FROM transactions
+		WHERE date >= date_trunc('month', $1::date)
+			AND date < date_trunc('month', $1::date) + INTERVAL '1 month'
+			AND amount > 0
 			
 	`
 
@@ -220,7 +218,8 @@ func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date 
 		LEFT JOIN categories c
 			ON t.category_id = c.id
 		WHERE t.date <= date_trunc('month', $1::date)
-			AND t.date > date_trunc('month', $1::date) - INTERVAL '30 days'
+			AND t.date > date_trunc('month', $1::date) - INTERVAL '31 days'
+			AND t.amount > 0
 		GROUP BY 2,3,4
 	`
 
@@ -241,6 +240,47 @@ func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date 
 			&transaction.Name,
 			&transaction.Color,
 			&transaction.ID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	return transactions, nil
+}
+
+type AmountDaily struct {
+	Amount int64  `json:"amount"`
+	Date   string `json:"date"`
+}
+
+func (s *TransactionStore) GetExpensesLast30Days(ctx context.Context) ([]AmountDaily, error) {
+	query := `
+		SELECT COALESCE(SUM(amount)) as amount, cast(date::timestamp::date as varchar) as date
+		FROM transactions
+		WHERE date <= date_trunc('day', now())
+			AND date > date_trunc('day', now()) - interval '31' day
+			AND amount > 0
+		GROUP BY 2
+		ORDER BY 2 ASC
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []AmountDaily
+
+	for rows.Next() {
+		var transaction AmountDaily
+		err := rows.Scan(
+			&transaction.Amount,
+			&transaction.Date,
 		)
 		if err != nil {
 			return nil, err

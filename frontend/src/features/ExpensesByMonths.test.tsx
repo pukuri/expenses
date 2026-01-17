@@ -16,8 +16,8 @@ jest.mock('recharts', () => ({
 describe('ExpensesByMonths', () => {
   it('will render chart based on data', () => {
     const data = [
-      { month: "2025-01", amount: 300 },
-      { month: "2025-02", amount: 350 },
+      { date: "2025-01", amount: 300 },
+      { date: "2025-02", amount: 350 },
     ]
 
     render(<ExpensesByMonths data={data} />)

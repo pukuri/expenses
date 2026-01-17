@@ -1,4 +1,4 @@
-import type { Category, ExpensesByMonthCategory, MonthlyChartData, TransactionsResponse } from "@/types";
+import type { Category, ChartDataByDate, ExpensesByMonthCategory, TransactionsResponse } from "@/types";
 import { render, screen } from "@testing-library/react";
 import MainLayout from "./MainLayout";
 
@@ -32,7 +32,7 @@ jest.mock('./CurrentMonthChart', () => ({
     <div data-testid='mock-current-month-chart'>Mock Expenses: {JSON.stringify(props.expenses)}</div>
   )),
 }))
-jest.mock('./ExpensesByMonths', () => ({
+jest.mock('./ExpensesLast30Days', () => ({
   __esModule: true,
   default: jest.fn(props => (
     <div data-testid='mock-expenses-by-month'>Mock Data: {JSON.stringify(props.data)}</div>
@@ -58,7 +58,7 @@ describe('MainLayout', () => {
     };
     const categories: Category[] = [{id: 1, name: 'Foods', color: '#2fe3b5'}]
     const expensesByMonthCategory: ExpensesByMonthCategory[] = [{id: 1, name: 'Foods', color: '#2fe3b5', amount: 2000000}]
-    const monthlyChartData: MonthlyChartData[] = [{month: '2025-12-01', amount: 2000000}]
+    const dailyChartData: ChartDataByDate[] = [{date: '2025-12-01', amount: 2000000}]
 
     render(
       <MainLayout
@@ -71,7 +71,7 @@ describe('MainLayout', () => {
         lastBalance={13275000}
         fetchTransactions={() => {}}
         expensesByMonthCategory={expensesByMonthCategory}
-        monthlyChartData={monthlyChartData}
+        dailyChartData={dailyChartData}
       />
     )
     
@@ -84,7 +84,7 @@ describe('MainLayout', () => {
     expect(screen.getByText(/Mock Last: 8000000/i)).toBeInTheDocument()
 
     expect(screen.getByTestId('mock-expenses-by-month')).toBeInTheDocument()
-    expect(screen.getByText(`Mock Data: [{"month":"2025-12-01","amount":2000000}]`)).toBeInTheDocument()
+    expect(screen.getByText(`Mock Data: [{"date":"2025-12-01","amount":2000000}]`)).toBeInTheDocument()
 
     expect(screen.getByTestId('mock-main-table')).toBeInTheDocument()
     expect(screen.getByTestId('mock-transaction-input')).toBeInTheDocument()
