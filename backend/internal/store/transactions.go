@@ -180,10 +180,9 @@ func (s *TransactionStore) GetExpensesByMonth(ctx context.Context, date string) 
 	query := `
 		SELECT COALESCE(SUM(amount), 0)
 		FROM transactions
-		WHERE date >= date_trunc('month', $1::date)
-			AND date < date_trunc('month', $1::date) + INTERVAL '1 month'
+		WHERE date <= date_trunc('day', $1::date)
+			AND date > date_trunc('day', $1::date) - INTERVAL '31 days'
 			AND amount > 0
-			
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
@@ -217,8 +216,8 @@ func (s *TransactionStore) GetExpensesByMonthCategory(ctx context.Context, date 
 		FROM transactions t
 		LEFT JOIN categories c
 			ON t.category_id = c.id
-		WHERE t.date <= date_trunc('month', $1::date)
-			AND t.date > date_trunc('month', $1::date) - INTERVAL '31 days'
+		WHERE t.date <= date_trunc('day', $1::date)
+			AND t.date > date_trunc('day', $1::date) - INTERVAL '31 days'
 			AND t.amount > 0
 		GROUP BY 2,3,4
 	`
@@ -260,7 +259,7 @@ func (s *TransactionStore) GetExpensesLast30Days(ctx context.Context) ([]AmountD
 		SELECT COALESCE(SUM(amount)) as amount, cast(date::timestamp::date as varchar) as date
 		FROM transactions
 		WHERE date <= date_trunc('day', now())
-			AND date > date_trunc('day', now()) - interval '31' day
+			AND date > date_trunc('day', now()) - INTERVAL '31 days'
 			AND amount > 0
 		GROUP BY 2
 		ORDER BY 2 ASC
