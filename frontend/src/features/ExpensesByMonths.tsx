@@ -20,7 +20,7 @@ export default function ExpensesByMonths({ data }: { data: ChartDataByDate[] }) 
           <BarChart data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="date"
               tickLine={true}
               tickMargin={10}
               axisLine={false}

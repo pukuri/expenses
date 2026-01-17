@@ -10,7 +10,6 @@ export default function ExpensesLast30Days({ data }: { data: ChartDataByDate[] }
     },
   } satisfies ChartConfig
   
-  console.log(data)
   data = data.map(d => ({ date: d.date, amount: d.amount }))
   
   return (
