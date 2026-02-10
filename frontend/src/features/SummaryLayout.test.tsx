@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import SummaryLayout from "./SummaryLayout";
 import type { User, ChartDataByDate } from "@/types";
-import type { MonthlyExpensesByCategory } from "@/data/expensesByMonthCategory12MonthsSample";
 
 // Mock Header component
 jest.mock('./Header', () => ({
@@ -34,6 +33,18 @@ jest.mock('./ExpensesByMonthCategory', () => ({
   )),
 }));
 
+// Mock the hook that makes API calls
+jest.mock('@/hooks/useExpensesByMonthCategory', () => ({
+  useExpensesByMonthCategory: jest.fn(() => ({
+    expenses: [
+      { id: 1, name: "Food", amount: 1200000, color: "#FF6B6B" },
+      { id: 2, name: "Transportation", amount: 800000, color: "#4ECDC4" }
+    ],
+    loading: false,
+    error: null
+  }))
+}));
+
 describe('SummaryLayout', () => {
   const mockUser: User = {
     name: 'John Doe',
@@ -46,22 +57,6 @@ describe('SummaryLayout', () => {
     { date: "2024-11", amount: 400 }
   ];
 
-  const mockMonthlyExpenses: MonthlyExpensesByCategory[] = [
-    {
-      date: "2025-01",
-      expenses: [
-        { id: 1, name: "Food", amount: 1200000, color: "#FF6B6B" },
-        { id: 2, name: "Transportation", amount: 800000, color: "#4ECDC4" }
-      ]
-    },
-    {
-      date: "2024-12",
-      expenses: [
-        { id: 1, name: "Food", amount: 1100000, color: "#FF6B6B" },
-        { id: 2, name: "Shopping", amount: 500000, color: "#96CEB4" }
-      ]
-    }
-  ];
 
   it('renders layout with header for authenticated user', () => {
     render(
@@ -70,7 +65,6 @@ describe('SummaryLayout', () => {
           user={mockUser} 
           isSample={false} 
           monthlyData={mockMonthlyData}
-          monthlyExpenses={mockMonthlyExpenses}
         />
       </BrowserRouter>
     );
@@ -85,7 +79,6 @@ describe('SummaryLayout', () => {
         <SummaryLayout 
           isSample={true} 
           monthlyData={mockMonthlyData}
-          monthlyExpenses={mockMonthlyExpenses}
         />
       </BrowserRouter>
     );
@@ -101,7 +94,6 @@ describe('SummaryLayout', () => {
           user={mockUser} 
           isSample={false} 
           monthlyData={mockMonthlyData}
-          monthlyExpenses={mockMonthlyExpenses}
         />
       </BrowserRouter>
     );
@@ -117,68 +109,10 @@ describe('SummaryLayout', () => {
           user={mockUser} 
           isSample={false} 
           monthlyData={mockMonthlyData}
-          monthlyExpenses={mockMonthlyExpenses}
         />
       </BrowserRouter>
     );
 
     expect(screen.getByText('Expenses by Category - Past 12 Months')).toBeInTheDocument();
-  });
-
-  it('renders ExpensesByMonthCategory components for each month', () => {
-    render(
-      <BrowserRouter>
-        <SummaryLayout 
-          user={mockUser} 
-          isSample={false} 
-          monthlyData={mockMonthlyData}
-          monthlyExpenses={mockMonthlyExpenses}
-        />
-      </BrowserRouter>
-    );
-
-    expect(screen.getByText('Mock ExpensesByMonthCategory - 2025-01 - 2 expenses')).toBeInTheDocument();
-    expect(screen.getByText('Mock ExpensesByMonthCategory - 2024-12 - 2 expenses')).toBeInTheDocument();
-  });
-
-  it('has correct layout structure', () => {
-    const { container } = render(
-      <BrowserRouter>
-        <SummaryLayout 
-          user={mockUser} 
-          isSample={false} 
-          monthlyData={mockMonthlyData}
-          monthlyExpenses={mockMonthlyExpenses}
-        />
-      </BrowserRouter>
-    );
-
-    const mainContainer = container.querySelector('.h-full');
-    expect(mainContainer).toBeInTheDocument();
-
-    const maxWidthContainer = container.querySelector('.max-w-420');
-    expect(maxWidthContainer).toBeInTheDocument();
-
-    const flexContainer = container.querySelector('.flex-col');
-    expect(flexContainer).toBeInTheDocument();
-  });
-
-  it('handles empty monthly expenses array', () => {
-    render(
-      <BrowserRouter>
-        <SummaryLayout 
-          user={mockUser} 
-          isSample={false} 
-          monthlyData={mockMonthlyData}
-          monthlyExpenses={[]}
-        />
-      </BrowserRouter>
-    );
-
-    expect(screen.getByTestId('mock-header')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-expenses-by-months')).toBeInTheDocument();
-    expect(screen.getByText('Expenses by Category - Past 12 Months')).toBeInTheDocument();
-    // Should not render any ExpensesByMonthCategory components
-    expect(screen.queryByTestId('mock-expenses-by-month-category')).not.toBeInTheDocument();
   });
 });

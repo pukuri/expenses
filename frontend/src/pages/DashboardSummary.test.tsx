@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import DashboardSummary from "./DashboardSummary";
 
@@ -26,16 +26,12 @@ jest.mock('@/hooks/useExpensesByMonths', () => ({
   }))
 }));
 
-jest.mock('@/hooks/useExpensesByMonthCategory12Months', () => ({
-  useExpensesByMonthCategory12Months: jest.fn(() => ({
-    monthlyExpenses: [
-      {
-        date: "2025-01",
-        expenses: [
-          { id: 1, name: "Food", amount: 1200000, color: "#FF6B6B" }
-        ]
-      }
-    ]
+// Mock the new single-month hook
+jest.mock('@/hooks/useExpensesByMonthCategory', () => ({
+  useExpensesByMonthCategory: jest.fn(() => ({
+    expenses: [],
+    loading: false,
+    error: null
   }))
 }));
 
@@ -60,11 +56,13 @@ describe('DashboardSummary', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardSummary />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardSummary />
+        </BrowserRouter>
+      );
+    });
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
@@ -76,11 +74,13 @@ describe('DashboardSummary', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardSummary />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardSummary />
+        </BrowserRouter>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('navigate-to')).toHaveTextContent('/');
@@ -99,11 +99,13 @@ describe('DashboardSummary', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardSummary />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardSummary />
+        </BrowserRouter>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('mock-summary-layout')).toBeInTheDocument();
@@ -118,11 +120,13 @@ describe('DashboardSummary', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardSummary />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardSummary />
+        </BrowserRouter>
+      );
+    });
 
     expect(mockFetchUser).toHaveBeenCalledTimes(1);
   });
@@ -139,11 +143,13 @@ describe('DashboardSummary', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardSummary />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardSummary />
+        </BrowserRouter>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('mock-summary-layout')).toBeInTheDocument();

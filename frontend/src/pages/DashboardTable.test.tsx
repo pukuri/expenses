@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import DashboardTable from "./DashboardTable";
 
@@ -37,7 +37,12 @@ jest.mock('@/hooks/useLastBalance', () => ({
 }));
 
 jest.mock('@/hooks/useExpensesByMonthCategory', () => ({
-  useExpensesByMonthCategories: jest.fn(() => ({ expenses: [] }))
+  useExpensesByMonthCategories: jest.fn(() => ({ expenses: [] })),
+  useExpensesByMonthCategory: jest.fn(() => ({
+    expenses: [],
+    loading: false,
+    error: null
+  }))
 }));
 
 jest.mock('@/hooks/useExpensesLast30Days', () => ({
@@ -74,11 +79,13 @@ describe('DashboardTable', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardTable />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardTable />
+        </BrowserRouter>
+      );
+    });
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
@@ -90,11 +97,13 @@ describe('DashboardTable', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardTable />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardTable />
+        </BrowserRouter>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('navigate-to')).toHaveTextContent('/');
@@ -113,11 +122,13 @@ describe('DashboardTable', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardTable />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardTable />
+        </BrowserRouter>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('mock-header')).toBeInTheDocument();
@@ -134,11 +145,13 @@ describe('DashboardTable', () => {
       fetchUser: mockFetchUser
     });
 
-    render(
-      <BrowserRouter>
-        <DashboardTable />
-      </BrowserRouter>
-    );
+    act(() => {
+      render(
+        <BrowserRouter>
+          <DashboardTable />
+        </BrowserRouter>
+      );
+    });
 
     expect(mockFetchUser).toHaveBeenCalledTimes(1);
   });
@@ -155,23 +168,27 @@ describe('DashboardTable', () => {
       fetchUser: mockFetchUser
     });
 
-    const { container } = render(
-      <BrowserRouter>
-        <DashboardTable />
-      </BrowserRouter>
-    );
+    let container: HTMLElement;
+    act(() => {
+      const rendered = render(
+        <BrowserRouter>
+          <DashboardTable />
+        </BrowserRouter>
+      );
+      container = rendered.container;
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('mock-header')).toBeInTheDocument();
     });
 
-    const mainContainer = container.querySelector('.h-full');
+    const mainContainer = container!.querySelector('.h-full');
     expect(mainContainer).toBeInTheDocument();
 
-    const maxWidthContainer = container.querySelector('.max-w-420');
+    const maxWidthContainer = container!.querySelector('.max-w-420');
     expect(maxWidthContainer).toBeInTheDocument();
 
-    const flexContainer = container.querySelector('.flex-col');
+    const flexContainer = container!.querySelector('.flex-col');
     expect(flexContainer).toBeInTheDocument();
   });
 });

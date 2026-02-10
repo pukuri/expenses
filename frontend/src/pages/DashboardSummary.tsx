@@ -3,19 +3,16 @@ import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import SummaryLayout from '@/features/SummaryLayout';
 import { useExpensesByMonths } from '@/hooks/useExpensesByMonths';
-import { useExpensesByMonthCategory12Months } from '@/hooks/useExpensesByMonthCategory12Months';
 import type { User } from '@/types';
 
 function DashboardSummaryContent({ user }: { user: User }) {
   const { expenses: monthlyData } = useExpensesByMonths();
-  const { monthlyExpenses } = useExpensesByMonthCategory12Months();
 
   return (
     <SummaryLayout
       user={user}
       isSample={false}
       monthlyData={monthlyData}
-      monthlyExpenses={monthlyExpenses}
     />
   );
 }
