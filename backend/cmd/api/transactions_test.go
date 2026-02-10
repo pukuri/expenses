@@ -22,6 +22,7 @@ type MockTransactionStore struct {
 	transactionList         []*store.Transaction // For tracking multiple transactions in cascading tests
 	err                     error
 	expensesByMonth         int64
+	expensesByMonthRange    int64
 	balanceByDate           int64
 	expensesByMonthCategory []store.CategoryReturnValue
 	expensesLast30Days      []store.AmountDaily
@@ -57,6 +58,13 @@ func (m *MockTransactionStore) GetExpensesByMonth(ctx context.Context, date stri
 		return 0, m.err
 	}
 	return m.expensesByMonth, nil
+}
+
+func (m *MockTransactionStore) GetExpensesByMonthRange(ctx context.Context, date string) (int64, error) {
+	if m.err != nil {
+		return 0, m.err
+	}
+	return m.expensesByMonthRange, nil
 }
 
 func (m *MockTransactionStore) GetExpensesByMonthCategory(ctx context.Context, date string) ([]store.CategoryReturnValue, error) {
@@ -507,8 +515,8 @@ func (suite *TransactionsTestSuite) TestGetExpensesByMonthCategoryHandler_StoreE
 
 func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_Success() {
 	mockStore := &MockTransactionStore{
-		expensesByMonth: 2500,
-		err:             nil,
+		expensesByMonthRange: 2500,
+		err:                  nil,
 	}
 
 	originalStore := suite.app.store
@@ -545,8 +553,8 @@ func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_Success() {
 
 func (suite *TransactionsTestSuite) TestGetExpensesByMonthsHandler_EdgeCase() {
 	mockStore := &MockTransactionStore{
-		expensesByMonth: 1500,
-		err:             nil,
+		expensesByMonthRange: 1500,
+		err:                  nil,
 	}
 
 	originalStore := suite.app.store

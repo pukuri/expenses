@@ -117,7 +117,7 @@ func (app *application) getExpensesByMonthsHandler(w http.ResponseWriter, r *htt
 	dates := getBackdate(date)
 
 	for _, monthDate := range dates {
-		amount, err := app.store.Transactions.GetExpensesByMonth(ctx, monthDate)
+		amount, err := app.store.Transactions.GetExpensesByMonthRange(ctx, monthDate)
 		if err != nil {
 			app.internalServerError(w, r, err)
 			return

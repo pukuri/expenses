@@ -10,7 +10,7 @@ export default function ExpensesLast30Days({ data }: { data: ChartDataByDate[] }
     },
   } satisfies ChartConfig
   
-  data = data.map(d => ({ date: d.date, amount: d.amount }))
+  data = data?.map(d => ({ date: d.date, amount: d.amount }))
   
   return (
     <div className="p-4 bottom-0 right-0 rounded-md bg-neutral-2 text-white">
