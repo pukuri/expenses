@@ -39,3 +39,30 @@ export interface ChartDataByDate {
   date: string;
   amount: number;
 }
+
+export interface EventExpense {
+  id: number;
+  eventId: number;
+  amount: number;
+  description: string;
+}
+
+export interface EventSummary {
+  id: number;
+  name: string;
+  description: string;
+  date: string;
+  totalExpenses: number;
+}
+
+export interface Event extends EventSummary {
+  expenses: EventExpense[];
+}
+
+export interface EventsResponse {
+  data: EventSummary[];
+}
+
+export interface EventExpensesResponse {
+  data: EventExpense[];
+}

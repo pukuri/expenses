@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, Table, PieChart } from 'lucide-react';
+import { Menu, Table, PieChart, Calendar } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,10 +15,12 @@ export default function NavigationMenu() {
   // Detect if we're in sample mode
   const isSampleMode = location.pathname.includes('/sample');
   const isOnSummaryPage = location.pathname.includes('/summary');
+  const isOnEventsPage = location.pathname.includes('/events');
   
   // Determine base routes based on mode
   const tableRoute = isSampleMode ? '/sample' : '/dashboard';
   const summaryRoute = isSampleMode ? '/sample/summary' : '/dashboard/summary';
+  const eventsRoute = isSampleMode ? '/sample/events' : '/events';
   
   const handleNavigateToTable = () => {
     navigate(tableRoute);
@@ -26,6 +28,10 @@ export default function NavigationMenu() {
   
   const handleNavigateToSummary = () => {
     navigate(summaryRoute);
+  };
+
+  const handleNavigateToEvents = () => {
+    navigate(eventsRoute);
   };
 
   return (
@@ -38,7 +44,7 @@ export default function NavigationMenu() {
       <DropdownMenuContent align="start">
         <DropdownMenuItem 
           onClick={handleNavigateToTable}
-          className={!isOnSummaryPage ? "bg-accent" : ""}
+          className={!isOnSummaryPage && !isOnEventsPage ? "bg-accent" : ""}
         >
           <Table className="mr-2 h-4 w-4" />
           Main Table
@@ -49,6 +55,13 @@ export default function NavigationMenu() {
         >
           <PieChart className="mr-2 h-4 w-4" />
           Monthly Summary
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={handleNavigateToEvents}
+          className={isOnEventsPage ? "bg-accent" : ""}
+        >
+          <Calendar className="mr-2 h-4 w-4" />
+          Events
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
