@@ -26,13 +26,11 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, isSample }: EventCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [hasLoadedExpenses, setHasLoadedExpenses] = useState(false);
   const { expenses, loading, error, fetchEventExpenses } = useEventExpenses(isSample);
 
   const handleAccordionChange = async (value: string) => {
     const isOpening = value === event.id.toString();
-    setIsExpanded(isOpening);
     
     if (isOpening && !hasLoadedExpenses) {
       await fetchEventExpenses(event.id);

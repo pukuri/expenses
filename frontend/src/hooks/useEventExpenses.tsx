@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { EventExpense, EventExpensesResponse } from '@/types';
+import type { EventExpense } from '@/types';
 import { getEventExpensesByEventId } from '@/data/eventExpensesSample';
 
 export const useEventExpenses = (isSample: boolean = false) => {

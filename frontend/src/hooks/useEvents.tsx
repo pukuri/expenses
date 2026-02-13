@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { EventSummary, EventsResponse } from '@/types';
+import type { EventSummary } from '@/types';
 import { eventsSummarySample } from '@/data/eventsSummarySample';
 
 export const useEvents = (isSample: boolean) => {
