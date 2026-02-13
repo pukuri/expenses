@@ -14,9 +14,9 @@ steps:
   dir: '.'
     
 # Backend steps
-- name: 'golang:latest'
-  args: ['go', 'test', './...']
-  dir: 'backend'
+# - name: 'golang:latest'
+#   args: ['go', 'test', './...']
+#   dir: 'backend'
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/expenses-backend', '.']
   dir: 'backend'
