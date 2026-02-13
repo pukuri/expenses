@@ -24,16 +24,16 @@ steps:
   args: ['push', 'gcr.io/$PROJECT_ID/expenses-backend']
   dir: 'backend'
 
-#Migration steps
-- id: 'Run Database Migrations'
-  name: 'golang:latest'
-  entrypoint: 'sh'
-  args:
-    - '-c'
-    - |
-      go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+# #Migration steps
+# - id: 'Run Database Migrations'
+#   name: 'golang:latest'
+#   entrypoint: 'sh'
+#   args:
+#     - '-c'
+#     - |
+#       go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       
-      migrate -path backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@${_DB_CONNECTION}/${_DB_NAME}?sslmode=require&channel_binding=require&search_path=public&prefer_simple_protocol=true&binary_parameters=yes" up
+#       migrate -path backend/cmd/migrate/migrations -database "postgres://${_DB_USER}:${_DB_PASSWORD}@${_DB_CONNECTION}/${_DB_NAME}?sslmode=require&channel_binding=require&search_path=public&prefer_simple_protocol=true&binary_parameters=yes" up
 
 # Cloud run deployment steps
 - name: 'gcr.io/cloud-builders/gcloud'
