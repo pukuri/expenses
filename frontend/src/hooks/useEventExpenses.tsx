@@ -17,12 +17,13 @@ export const useEventExpenses = (isSample: boolean = false) => {
         setExpenses(eventExpenses);
       } else {
         // Real API call would go here
-        const response = await fetch(`/api/events/${eventId}/expenses`);
+        const response = await fetch(`/api/v1/events/${eventId}/expenses`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: EventExpensesResponse = await response.json();
-        setExpenses(data.data);
+        const expenses = await response.json();
+        console.log(expenses)
+        setExpenses(expenses.data);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

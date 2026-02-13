@@ -16,12 +16,12 @@ export const useEvents = (isSample: boolean) => {
         setEvents(eventsSummarySample);
       } else {
         // Real API call would go here
-        const response = await fetch('/api/events');
+        const response = await fetch('/api/v1/events');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: EventsResponse = await response.json();
-        setEvents(data.data);
+        const events = await response.json();
+        setEvents(events.data);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

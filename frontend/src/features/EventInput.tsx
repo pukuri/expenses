@@ -25,7 +25,7 @@ export default function EventInput({ refetch }: EventInputProps) {
 
     try {
       setLoading(true);
-      const response = await fetch('/api/events', {
+      const response = await fetch('/api/v1/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

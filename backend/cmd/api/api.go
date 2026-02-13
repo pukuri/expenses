@@ -74,6 +74,20 @@ func (app *application) mount() http.Handler {
 				r.Post("/", app.createCategoryHandler)
 				r.Get("/", app.indexCategoryHandler)
 			})
+
+			r.Route("/events", func(r chi.Router) {
+				r.Post("/", app.createEventHandler)
+				r.Get("/", app.indexEventsHandler)
+
+				r.Route("/{eventID}", func(r chi.Router) {
+					r.Use(app.eventContextMiddleware)
+
+					r.Get("/", app.getEventHandler)
+					r.Delete("/", app.deleteEventHandler)
+					r.Get("/expenses", app.getEventExpensesHandler)
+					r.Post("/expenses", app.createEventExpenseHandler)
+				})
+			})
 		})
 	})
 

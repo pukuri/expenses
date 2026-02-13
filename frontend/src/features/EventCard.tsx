@@ -18,6 +18,7 @@ import { useEventExpenses } from '@/hooks/useEventExpenses';
 import type { EventSummary } from '@/types';
 import AmountFormatter from '@/utils/AmountFormatter';
 import DateConverter from '@/utils/DateConverter';
+import EventExpenseInput from './EventExpenseInput';
 
 interface EventCardProps {
   event: EventSummary;
@@ -70,6 +71,13 @@ export default function EventCard({ event, isSample }: EventCardProps) {
             </div>
           </AccordionTrigger>
           <AccordionContent className="px-6 pb-4">
+            {!isSample && (
+              <EventExpenseInput 
+                eventId={event.id} 
+                onExpenseAdded={() => fetchEventExpenses(event.id)}
+              />
+            )}
+            
             {loading ? (
               <div className="flex justify-center py-4">
                 <div className="text-chart-1">Loading expenses...</div>
@@ -78,7 +86,7 @@ export default function EventCard({ event, isSample }: EventCardProps) {
               <div className="text-red-500 text-center py-4">
                 Error loading expenses: {error}
               </div>
-            ) : expenses.length === 0 ? (
+            ) : (expenses && expenses.length === 0) ? (
               <div className="text-chart-1 text-center py-4">
                 No expenses found for this event
               </div>
@@ -91,7 +99,7 @@ export default function EventCard({ event, isSample }: EventCardProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {expenses.map((expense) => (
+                  {expenses && expenses.map((expense) => (
                     <TableRow key={expense.id} className="text-white">
                       <TableCell className="font-medium text-white">
                         {expense.description}

@@ -16,6 +16,7 @@ export default function EventsList({ isSample }: EventsListProps) {
       </div>
     );
   }
+  
 
   return (
     <div className="mx-5 flex flex-col gap-5">

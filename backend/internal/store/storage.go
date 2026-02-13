@@ -34,6 +34,14 @@ type Storage struct {
 		Upsert(context.Context, *User) error
 		GetById(context.Context, int64) (*User, error)
 	}
+	Events interface {
+		Create(context.Context, *Event) error
+		GetAll(context.Context) ([]EventSummary, error)
+		GetByID(context.Context, int64) (*Event, error)
+		GetEventExpenses(context.Context, int64) ([]EventExpense, error)
+		CreateExpense(context.Context, *EventExpense) error
+		Delete(context.Context, int64) error
+	}
 }
 
 func NewStorage(db *sql.DB) Storage {
@@ -41,5 +49,6 @@ func NewStorage(db *sql.DB) Storage {
 		Transactions: &TransactionStore{db},
 		Categories:   &CategoryStore{db},
 		Users:        &UserStore{db},
+		Events:       &EventStore{db},
 	}
 }

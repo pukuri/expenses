@@ -11,6 +11,7 @@ type contextKey string
 const (
 	authenticatedUser contextKey = "authenticatedUser"
 	transactionCtx    contextKey = "transaction"
+	eventCtx          contextKey = "event"
 )
 
 // func getAuthenticatedUserFromCtx(r *http.Request) *store.User {
