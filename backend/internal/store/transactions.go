@@ -65,6 +65,7 @@ func (s *TransactionStore) Index(ctx context.Context) ([]TransactionGet, error) 
 		FROM transactions t
 		LEFT JOIN categories c
 			ON t.category_id = c.id
+		WHERE t.date > CURRENT_DATE - INTERVAL '3 months'
 		ORDER BY id DESC
 	`
 
